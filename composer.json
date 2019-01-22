@@ -1,0 +1,18 @@
+{
+    "name": "gd1m/todo-app",
+    "description": "Simple TODO application",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dmitry Golovachev",
+            "email": "gdim447@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "TodoApp\\": "src/"
+        }
+    }
+}
