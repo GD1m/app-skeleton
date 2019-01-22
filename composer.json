@@ -9,7 +9,9 @@
             "email": "gdim447@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "php-di/php-di": "^6.0"
+    },
     "require-dev": {
         "roave/security-advisories": "dev-master"
     },
