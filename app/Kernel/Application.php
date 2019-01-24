@@ -95,7 +95,7 @@ final class Application
     {
         $containerBuilder = new ContainerBuilder();
 
-        $containerBuilder->useAutowiring(false);
+        $containerBuilder->useAutowiring(true);
         $containerBuilder->useAnnotations(false);
 
         $containerBuilder->addDefinitions($definitionsPath);

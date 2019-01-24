@@ -3,7 +3,5 @@
 use FastRoute\RouteCollector;
 
 return function (RouteCollector $r) {
-    $r->addRoute('GET', '/test', function () {
-        return 'hi';
-    });
+    $r->addRoute('GET', '/test', 'TestController@test');
 };

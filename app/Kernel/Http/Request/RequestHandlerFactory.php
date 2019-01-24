@@ -2,12 +2,9 @@
 
 namespace App\Kernel\Http\Request;
 
-use Middlewares\RequestHandler;
-use FastRoute\Dispatcher;
-use Middlewares\FastRoute as ValidateRoute;
+use App\Kernel\Http\Middleware\HandleRoute;
+use Middlewares\FastRoute;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Relay\Relay;
 
@@ -23,20 +20,24 @@ final class RequestHandlerFactory
      */
     public static function make(ContainerInterface $container): RequestHandlerInterface
     {
+        $resolver = function ($middleware) use ($container) {
+            return $container->get($middleware);
+        };
+
         return new Relay(
-            self::middlewares($container)
+            self::middlewares(),
+            $resolver
         );
     }
 
     /**
-     * @param ContainerInterface $container
-     * @return array|MiddlewareInterface[]
+     * @return array
      */
-    private static function middlewares(ContainerInterface $container): array
+    private static function middlewares(): array
     {
         return [
-            new ValidateRoute($container->get(Dispatcher::class)),
-            new RequestHandler($container)
+            FastRoute::class,
+            HandleRoute::class,
         ];
     }
 }
