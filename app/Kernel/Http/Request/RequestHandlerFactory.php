@@ -3,7 +3,7 @@
 namespace App\Kernel\Http\Request;
 
 use App\Kernel\Http\Middleware\HandleRoute;
-use Middlewares\FastRoute;
+use App\Kernel\Http\Middleware\DispatchRequest;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Relay\Relay;
@@ -18,14 +18,14 @@ final class RequestHandlerFactory
      * @param ContainerInterface $container
      * @return RequestHandlerInterface
      */
-    public static function make(ContainerInterface $container): RequestHandlerInterface
+    public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
         $resolver = function ($middleware) use ($container) {
             return $container->get($middleware);
         };
 
         return new Relay(
-            self::middlewares(),
+            $this->middlewares(),
             $resolver
         );
     }
@@ -33,10 +33,10 @@ final class RequestHandlerFactory
     /**
      * @return array
      */
-    private static function middlewares(): array
+    private function middlewares(): array
     {
         return [
-            FastRoute::class,
+            DispatchRequest::class,
             HandleRoute::class,
         ];
     }

@@ -16,7 +16,7 @@ final class RouterFactory
      * @param ContainerInterface $container
      * @return Dispatcher
      */
-    public static function make(ContainerInterface $container): Dispatcher
+    public function __invoke(ContainerInterface $container): Dispatcher
     {
         return simpleDispatcher(require $container->get('basePath') . '/routes/v1.php');
     }

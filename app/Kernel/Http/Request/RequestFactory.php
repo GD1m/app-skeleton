@@ -14,7 +14,7 @@ final class RequestFactory
     /**
      * @return ServerRequestInterface
      */
-    public static function make(): ServerRequestInterface
+    public function __invoke(): ServerRequestInterface
     {
         return ServerRequestFactory::fromGlobals();
     }

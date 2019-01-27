@@ -1,13 +1,15 @@
 <?php declare(strict_types=1);
 
 use App\Kernel\Http\Kernel as HttpKernel;
+use App\Kernel\Http\Middleware\DispatchRequest;
 use App\Kernel\Http\Middleware\HandleRoute;
+use App\Kernel\Http\Request\Request;
 use App\Kernel\Http\Request\RequestFactory;
 use App\Kernel\Http\Request\RequestHandlerFactory;
+use App\Kernel\Http\Request\RequestImpl;
 use App\Kernel\Http\Response\ControllerResponseFactory;
 use App\Kernel\Http\Router\RouterFactory;
 use FastRoute\Dispatcher;
-use Middlewares\FastRoute;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -19,11 +21,16 @@ use function DI\factory;
 use function DI\get;
 
 return [
-    Dispatcher::class => factory([RouterFactory::class, 'make']),
+    // Http:
+    Dispatcher::class => factory(RouterFactory::class),
 
-    ServerRequestInterface::class => factory([RequestFactory::class, 'make']),
+    ServerRequestInterface::class => factory(RequestFactory::class),
 
-    RequestHandlerInterface::class => factory([RequestHandlerFactory::class, 'make']),
+    Request::class => create(RequestImpl::class)->constructor(
+        get(ServerRequestInterface::class)
+    ),
+
+    RequestHandlerInterface::class => factory(RequestHandlerFactory::class),
 
     HttpKernel::class => create(HttpKernel::class)->constructor(
         get(RequestHandlerInterface::class)
@@ -38,7 +45,7 @@ return [
     SapiEmitter::class => create(SapiEmitter::class),
 
     // Middlewares:
-    FastRoute::class => create(FastRoute::class)->constructor(
+    DispatchRequest::class => create(DispatchRequest::class)->constructor(
         get(Dispatcher::class)
     ),
 

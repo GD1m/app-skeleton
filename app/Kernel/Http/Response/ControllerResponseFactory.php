@@ -40,14 +40,15 @@ final class ControllerResponseFactory
             return $responseContent;
         }
 
-        if (!\is_string($responseContent)) {
-            throw new RuntimeException(sprintf('Unexpected response content type: %s', \gettype($responseContent)));
+        if (\is_string($responseContent)) {
+            $response = $this->responseFactory->createResponse()->withHeader('Content-Type', 'text/html');
+
+            $response->getBody()->write($responseContent);
+
+            return $response;
         }
 
-        $response = $this->responseFactory->createResponse()->withHeader('Content-Type', 'text/html');
+        throw new RuntimeException(sprintf('Unexpected response content type: %s', \gettype($responseContent)));
 
-        $response->getBody()->write($responseContent);
-
-        return $response;
     }
 }
