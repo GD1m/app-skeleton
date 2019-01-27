@@ -18,7 +18,8 @@
         "zendframework/zend-httphandlerrunner": "^1.0",
         "doctrine/orm": "^2.6",
         "ramsey/uuid-doctrine": "^1.5",
-        "moontoast/math": "^1.1"
+        "moontoast/math": "^1.1",
+        "rakit/validation": "^1.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master"
