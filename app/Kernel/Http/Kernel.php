@@ -31,6 +31,13 @@ final class Kernel
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $this->setCorsHeaders();
+
         return $this->requestHandler->handle($request);
+    }
+
+    private function setCorsHeaders(): void
+    {
+        header('Access-Control-Allow-Origin: *');
     }
 }
