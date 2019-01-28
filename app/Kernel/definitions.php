@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Kernel\Database\Entity\EntityManagerFactory;
-use App\Kernel\Exceptions\HandlerFactory;
+use App\Kernel\Exceptions\ExceptionHandlerFactory;
 use App\Kernel\Http\Kernel as HttpKernel;
 use App\Kernel\Http\Middleware\DispatchRequest;
 use App\Kernel\Http\Middleware\HandleRoute;
@@ -67,7 +67,7 @@ return [
     EntityManagerInterface::class => factory(EntityManagerFactory::class),
 
     // Error Handler
-    BooBoo::class => factory(HandlerFactory::class),
+    BooBoo::class => factory(ExceptionHandlerFactory::class),
 
     // Utils
     Validator::class => factory(ValidatorFactory::class),

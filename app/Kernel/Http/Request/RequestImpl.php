@@ -2,6 +2,8 @@
 
 namespace App\Kernel\Http\Request;
 
+use App\Entity\User;
+use App\Exceptions\PropertyMissedException;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -14,6 +16,11 @@ final class RequestImpl implements Request
      * @var ServerRequestInterface
      */
     private $serverRequest;
+
+    /**
+     * @var User
+     */
+    private $user;
 
     /**
      * @param ServerRequestInterface $serverRequest
@@ -47,5 +54,26 @@ final class RequestImpl implements Request
     public function post(string $param)
     {
         return $this->serverRequest->getParsedBody()[$param] ?? null;
+    }
+
+    /**
+     * @return User
+     * @throws PropertyMissedException
+     */
+    public function getUser(): User
+    {
+        if (null === $this->user) {
+            throw new PropertyMissedException('User not assigned');
+        }
+
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function setUser(User $user): void
+    {
+        $this->user = $user;
     }
 }

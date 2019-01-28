@@ -2,8 +2,10 @@
 
 namespace App\Kernel\Http\Request;
 
-use App\Kernel\Http\Middleware\HandleRoute;
+use App\Kernel\Http\Middleware\AuthorizeRequest;
+use App\Kernel\Http\Middleware\CallController;
 use App\Kernel\Http\Middleware\DispatchRequest;
+use App\Kernel\Http\Middleware\HandleRoute;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Relay\Relay;
@@ -14,6 +16,10 @@ use Relay\Relay;
  */
 final class RequestHandlerFactory
 {
+    public const REQUEST_HANDLER_ATTRIBUTE = 'request-handler';
+    public const CONTROLLER_ATTRIBUTE = 'controller';
+    public const METHOD_ATTRIBUTE = 'method';
+
     /**
      * @param ContainerInterface $container
      * @return RequestHandlerInterface
@@ -38,6 +44,8 @@ final class RequestHandlerFactory
         return [
             DispatchRequest::class,
             HandleRoute::class,
+            AuthorizeRequest::class,
+            CallController::class,
         ];
     }
 }

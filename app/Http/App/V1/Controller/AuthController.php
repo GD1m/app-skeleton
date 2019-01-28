@@ -15,6 +15,13 @@ use Zend\Diactoros\Response\JsonResponse;
 final class AuthController extends Controller
 {
     /**
+     * @var array
+     */
+    protected $shouldBeAuthorized = [
+        'me',
+    ];
+
+    /**
      * @var Request
      */
     private $request;
@@ -72,6 +79,22 @@ final class AuthController extends Controller
         );
 
         return $this->responseUserWithToken($user);
+    }
+
+    /**
+     * @return array
+     */
+    public function me(): array
+    {
+        $user = $this->request->getUser();
+
+        return [
+            'user' => [
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'createdAt' => $user->getCreatedAt()->format('c'),
+            ],
+        ];
     }
 
     /**

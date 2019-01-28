@@ -7,10 +7,10 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Class HandlerFactory
+ * Class ExceptionHandlerFactory
  * @package App\Kernel\Exceptions
  */
-final class HandlerFactory
+final class ExceptionHandlerFactory
 {
     /**
      * @param ContainerInterface $container

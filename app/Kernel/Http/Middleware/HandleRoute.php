@@ -3,7 +3,7 @@
 namespace App\Kernel\Http\Middleware;
 
 use App\Http\App\V1\Controller\Controller;
-use App\Kernel\Http\Response\ControllerResponseFactory;
+use App\Kernel\Http\Request\RequestHandlerFactory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,55 +30,28 @@ final class HandleRoute implements MiddlewareInterface
     private $container;
 
     /**
-     * @var string Attribute name for handler reference
-     */
-    private $handlerAttribute = 'request-handler';
-
-    /**
-     * @var ControllerResponseFactory
-     */
-    private $responseFactory;
-
-    /**
      * @param ContainerInterface $container
-     * @param ControllerResponseFactory $responseFactory
      */
-    public function __construct(ContainerInterface $container, ControllerResponseFactory $responseFactory)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->responseFactory = $responseFactory;
     }
 
     /**
-     * Process a server request and return a response.
-     *
-     * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $handler
-     * @return ResponseInterface
+     * {@inheritdoc}
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $requestHandler = $request->getAttribute($this->handlerAttribute);
+        $requestHandler = $request->getAttribute(RequestHandlerFactory::REQUEST_HANDLER_ATTRIBUTE);
 
         if (empty($requestHandler)) {
             throw new RuntimeException('Empty request handler');
         }
 
-        if (\is_string($requestHandler) && false !== strpos($requestHandler, self::HANDLER_DELIMITER)) {
-            $responseContent = $this->callController($requestHandler);
-
-            return $this->processResponseContent($responseContent);
+        if (!\is_string($requestHandler) || false === strpos($requestHandler, self::HANDLER_DELIMITER)) {
+            throw new RuntimeException(sprintf('Invalid request handler: %s', \gettype($requestHandler)));
         }
 
-        throw new RuntimeException(sprintf('Invalid request handler: %s', \gettype($requestHandler)));
-    }
-
-    /**
-     * @param $requestHandler
-     * @return ResponseInterface|array|string|mixed
-     */
-    private function callController(string $requestHandler)
-    {
         [$class, $method] = explode(self::HANDLER_DELIMITER, $requestHandler, 2);
 
         $class = $this->controllerNamespace . $class;
@@ -87,18 +60,28 @@ final class HandleRoute implements MiddlewareInterface
 
         if (!($controller instanceof Controller)) {
             throw new RuntimeException(sprintf('Controllers must be extended from %s', Controller::class));
-
         }
 
-        return $controller->{$method}();
+        return $handler->handle(
+            $this->setControllerData($request, $controller, $method)
+        );
     }
 
     /**
-     * @param $responseContent
-     * @return ResponseInterface
+     * @param ServerRequestInterface $request
+     * @param Controller $controller
+     * @param string $method
+     * @return ServerRequestInterface
      */
-    private function processResponseContent($responseContent): ResponseInterface
+    private function setControllerData(
+        ServerRequestInterface $request,
+        Controller $controller,
+        string $method
+    ): ServerRequestInterface
     {
-        return $this->responseFactory->fromContent($responseContent);
+        $request = $request->withAttribute(RequestHandlerFactory::CONTROLLER_ATTRIBUTE, $controller);
+        $request = $request->withAttribute(RequestHandlerFactory::METHOD_ATTRIBUTE, $method);
+
+        return $request;
     }
 }

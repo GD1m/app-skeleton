@@ -10,5 +10,16 @@ namespace App\Http\App\V1\Controller;
  */
 abstract class Controller
 {
+    /**
+     * @var array
+     */
+    protected $shouldBeAuthorized = [];
 
+    /**
+     * @return array
+     */
+    public function shouldBeAuthorized(): array
+    {
+        return $this->shouldBeAuthorized;
+    }
 }

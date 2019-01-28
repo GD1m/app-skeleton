@@ -2,6 +2,7 @@
 
 namespace App\Kernel\Http\Request;
 
+use App\Entity\User;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -30,4 +31,14 @@ interface Request
      * @return string|array|null
      */
     public function post(string $param);
+
+    /**
+     * @return User
+     */
+    public function getUser(): User;
+
+    /**
+     * @param User $user
+     */
+    public function setUser(User $user);
 }

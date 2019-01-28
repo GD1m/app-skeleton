@@ -36,6 +36,12 @@ final class JsonFormatter extends BooBooJsonFormatter
             ];
 
             $statusCode = 401;
+        } elseif ($e instanceof UnauthorizedException) {
+            $data = [
+                'error' => 'Forbidden',
+            ];
+
+            $statusCode = 403;
         } else {
             $data = $this->formatExceptions($e);
         }
