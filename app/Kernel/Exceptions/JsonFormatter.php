@@ -3,26 +3,34 @@
 namespace App\Kernel\Exceptions;
 
 use App\Exceptions\ValidationException;
+use App\Kernel\Http\Response\ErrorResponse;
 use League\BooBoo\Formatter\JsonFormatter as BooBooJsonFormatter;
 
 final class JsonFormatter extends BooBooJsonFormatter
 {
     /**
      * @param \Throwable $e
-     * @return string
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
      */
-    public function format($e): string
+    public function format($e)
     {
+        $statusCode = 500;
+
         if ($e instanceof \ErrorException) {
-            $response = $this->handleErrors($e);
+            $data = $this->handleErrors($e);
         } elseif ($e instanceof ValidationException) {
-            $response = [
+            $data = [
                 'error' => $e->getErrorBag()->all()[0],
             ];
+
+            $statusCode = 400;
         } else {
-            $response = $this->formatExceptions($e);
+            $data = $this->formatExceptions($e);
         }
 
-        return json_encode($response);
+        $response = new ErrorResponse($data, $statusCode);
+
+        $response->response();
     }
 }
