@@ -11,6 +11,7 @@ use Ramsey\Uuid\UuidInterface;
  *
  * @Entity
  * @Table(name="sessions")
+ * @Entity(repositoryClass="App\Repository\SessionRepository")
  */
 class Session
 {

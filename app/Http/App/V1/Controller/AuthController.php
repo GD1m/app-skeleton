@@ -2,7 +2,9 @@
 
 namespace App\Http\App\V1\Controller;
 
+use App\Entity\User;
 use App\Kernel\Http\Request\Request;
+use App\Services\Auth\LoginUserService;
 use App\Services\Auth\RegisterUserService;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -22,13 +24,23 @@ final class AuthController extends Controller
     private $registerUserService;
 
     /**
+     * @var LoginUserService
+     */
+    private $loginUserService;
+
+    /**
      * @param Request $request
      * @param RegisterUserService $registerUserService
+     * @param LoginUserService $loginUserService
      */
-    public function __construct(Request $request, RegisterUserService $registerUserService)
-    {
+    public function __construct(
+        Request $request,
+        RegisterUserService $registerUserService,
+        LoginUserService $loginUserService
+    ) {
         $this->request = $request;
         $this->registerUserService = $registerUserService;
+        $this->loginUserService = $loginUserService;
     }
 
     /**
@@ -44,6 +56,30 @@ final class AuthController extends Controller
             $this->request->post('confirmPassword')
         );
 
+        return $this->responseUserWithToken($user);
+    }
+
+    /**
+     * @return JsonResponse
+     * @throws \App\Exceptions\BadCredentialsException
+     * @throws \App\Exceptions\InfiniteLoopException
+     */
+    public function login(): JsonResponse
+    {
+        $user = $this->loginUserService->login(
+            $this->request->post('username'),
+            $this->request->post('password')
+        );
+
+        return $this->responseUserWithToken($user);
+    }
+
+    /**
+     * @param User $user
+     * @return JsonResponse
+     */
+    private function responseUserWithToken(User $user): JsonResponse
+    {
         return (new JsonResponse([
             'user' => [
                 'id' => $user->getId(),

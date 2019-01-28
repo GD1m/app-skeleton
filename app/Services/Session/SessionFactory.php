@@ -4,7 +4,9 @@ namespace App\Services\Session;
 
 use App\Entity\Session;
 use App\Entity\User;
+use App\Repository\SessionRepository;
 use App\Services\Security\TokenGenerator;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class SessionFactory
@@ -16,13 +18,19 @@ final class SessionFactory
      * @var TokenGenerator
      */
     private $tokenGenerator;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
     /**
      * @param TokenGenerator $tokenGenerator
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(TokenGenerator $tokenGenerator)
+    public function __construct(TokenGenerator $tokenGenerator, EntityManagerInterface $entityManager)
     {
         $this->tokenGenerator = $tokenGenerator;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -32,6 +40,8 @@ final class SessionFactory
      */
     public function new(User $user): Session
     {
+        $this->destroyOldSessions($user);
+
         $token = $this->tokenGenerator->generateUniqueToken(Session::class);
 
         $session = new Session();
@@ -43,5 +53,13 @@ final class SessionFactory
         $user->addSession($session);
 
         return $session;
+    }
+
+    private function destroyOldSessions(User $user): void
+    {
+        /** @var SessionRepository $repository */
+        $repository = $this->entityManager->getRepository(Session::class);
+
+        $repository->destroySessions($user->getId());
     }
 }

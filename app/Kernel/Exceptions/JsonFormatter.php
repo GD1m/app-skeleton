@@ -2,6 +2,7 @@
 
 namespace App\Kernel\Exceptions;
 
+use App\Exceptions\BadCredentialsException;
 use App\Exceptions\ValidationException;
 use App\Kernel\Http\Response\ErrorResponse;
 use League\BooBoo\Formatter\JsonFormatter as BooBooJsonFormatter;
@@ -29,6 +30,12 @@ final class JsonFormatter extends BooBooJsonFormatter
             ];
 
             $statusCode = 400;
+        } elseif ($e instanceof BadCredentialsException) {
+            $data = [
+                'error' => 'Invalid Username or Password',
+            ];
+
+            $statusCode = 401;
         } else {
             $data = $this->formatExceptions($e);
         }
