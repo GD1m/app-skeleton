@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use App\Kernel\Database\Entity\EntityManagerFactory;
 use App\Kernel\Exceptions\HandlerFactory;
 use App\Kernel\Http\Kernel as HttpKernel;
 use App\Kernel\Http\Middleware\DispatchRequest;
@@ -12,6 +13,7 @@ use App\Kernel\Http\Response\ControllerResponseFactory;
 use App\Kernel\Http\Router\RouterFactory;
 use App\Kernel\Utils\Logger\LoggerFactory;
 use App\Kernel\Utils\Validation\ValidatorFactory;
+use Doctrine\ORM\EntityManagerInterface;
 use FastRoute\Dispatcher;
 use League\BooBoo\BooBoo;
 use Psr\Container\ContainerInterface;
@@ -59,6 +61,10 @@ return [
         get(ContainerInterface::class),
         get(ControllerResponseFactory::class)
     ),
+
+    // Database:
+    EntityManagerInterface::class => factory(EntityManagerFactory::class),
+
     // Error Handler
     BooBoo::class => factory(HandlerFactory::class),
 
