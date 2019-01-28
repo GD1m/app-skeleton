@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Setup;
 use Psr\Container\ContainerInterface;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
+use Ramsey\Uuid\Doctrine\UuidType;
 
 /**
  * Class EntityManagerFactory
@@ -45,11 +46,6 @@ final class EntityManagerFactory
      */
     private function bindDoctrineTypes(EntityManagerInterface $entityManager): void
     {
-        Type::addType('uuid_binary_ordered_time', UuidBinaryOrderedTimeType::class);
-
-        $entityManager
-            ->getConnection()
-            ->getDatabasePlatform()
-            ->registerDoctrineTypeMapping('uuid_binary_ordered_time', 'binary');
+        Type::addType('uuid', UuidType::class);
     }
 }

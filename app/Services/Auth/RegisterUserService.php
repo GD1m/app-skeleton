@@ -2,7 +2,9 @@
 
 namespace App\Services\Auth;
 
+use App\Entity\Session;
 use App\Entity\User;
+use App\Services\Session\SessionFactory;
 use App\Services\User\CreateUserService;
 use App\Services\Validation\Validator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,18 +29,26 @@ final class RegisterUserService
     private $entityManager;
 
     /**
+     * @var SessionFactory
+     */
+    private $sessionFactory;
+
+    /**
      * @param Validator $validator
      * @param CreateUserService $createUserService
      * @param EntityManagerInterface $entityManager
+     * @param SessionFactory $sessionFactory
      */
     public function __construct(
         Validator $validator,
         CreateUserService $createUserService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        SessionFactory $sessionFactory
     ) {
         $this->validator = $validator;
         $this->createUserService = $createUserService;
         $this->entityManager = $entityManager;
+        $this->sessionFactory = $sessionFactory;
     }
 
     /**
@@ -47,6 +57,7 @@ final class RegisterUserService
      * @param string|null $confirmPassword
      * @return User
      * @throws \App\Exceptions\ValidationException
+     * @throws \App\Exceptions\InfiniteLoopException
      */
     public function register(string $username = null, string $password = null, string $confirmPassword = null): User
     {
@@ -55,6 +66,11 @@ final class RegisterUserService
         $user = $this->createUserService->make($username, $password);
 
         $this->entityManager->persist($user);
+
+        $this->entityManager->persist(
+            $this->createSession($user)
+        );
+
         $this->entityManager->flush();
 
         return $user;
@@ -81,5 +97,15 @@ final class RegisterUserService
                 'confirm_password' => 'required|same:password',
             ])
             ->validate();
+    }
+
+    /**
+     * @param $user
+     * @return Session
+     * @throws \App\Exceptions\InfiniteLoopException
+     */
+    private function createSession($user): Session
+    {
+        return $this->sessionFactory->new($user);
     }
 }

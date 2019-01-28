@@ -4,6 +4,7 @@ namespace App\Http\App\V1\Controller;
 
 use App\Kernel\Http\Request\Request;
 use App\Services\Auth\RegisterUserService;
+use Zend\Diactoros\Response\JsonResponse;
 
 /**
  * Class AuthController
@@ -31,10 +32,11 @@ final class AuthController extends Controller
     }
 
     /**
-     * @return array
+     * @return JsonResponse
      * @throws \App\Exceptions\ValidationException
+     * @throws \App\Exceptions\InfiniteLoopException
      */
-    public function register(): array
+    public function register(): JsonResponse
     {
         $user = $this->registerUserService->register(
             $this->request->post('username'),
@@ -42,12 +44,12 @@ final class AuthController extends Controller
             $this->request->post('confirmPassword')
         );
 
-        return [
+        return (new JsonResponse([
             'user' => [
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
                 'createdAt' => $user->getCreatedAt()->format('c'),
             ],
-        ];
+        ]))->withHeader('Authorization', $user->getSessions()->last()->getToken());
     }
 }

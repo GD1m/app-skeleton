@@ -2,7 +2,6 @@
 
 namespace App\Exceptions;
 
-use Monolog\Logger;
 use Rakit\Validation\ErrorBag;
 use Throwable;
 

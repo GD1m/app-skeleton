@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -19,14 +21,14 @@ class User
      * @var UuidInterface
      *
      * @Id
-     * @Column(type="uuid_binary_ordered_time", unique=true)
+     * @Column(type="uuid", unique=true)
      * @GeneratedValue(strategy="CUSTOM")
-     * @CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidOrderedTimeGenerator")
+     * @CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private $id;
 
     /**
-     * @Column(type="string", unique=true)
+     * @Column(type="string", unique=true, length=50)
      *
      * @var string
      */
@@ -46,9 +48,16 @@ class User
      */
     private $created_at;
 
+    /**
+     * @OneToMany(targetEntity="Session", mappedBy="user")
+     *
+     * @var Session[]|Collection
+     **/
+    private $sessions;
+
     public function __construct()
     {
-        $this->id = Uuid::uuid4();
+        $this->sessions = new ArrayCollection();
     }
 
     /**
@@ -105,5 +114,21 @@ class User
     public function setCreatedAt(DateTime $created_at): void
     {
         $this->created_at = $created_at;
+    }
+
+    /**
+     * @param Session $session
+     */
+    public function addSession(Session $session): void
+    {
+        $this->sessions[] = $session;
+    }
+
+    /**
+     * @return Session[]|Collection
+     */
+    public function getSessions(): Collection
+    {
+        return $this->sessions;
     }
 }
