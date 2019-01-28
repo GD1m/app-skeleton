@@ -3,5 +3,7 @@
 use FastRoute\RouteCollector;
 
 return function (RouteCollector $r) {
-    $r->post('/users', 'AuthController@register');
+    $r->addGroup('/app/v1', function (RouteCollector $r) {
+        $r->post('/users', 'AuthController@register');
+    });
 };
