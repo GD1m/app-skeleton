@@ -2,6 +2,7 @@
 
 namespace App\Kernel\Utils\Validation;
 
+use App\Kernel\Utils\Validation\Rules\UniqueRule;
 use Psr\Container\ContainerInterface;
 use Rakit\Validation\Validator;
 
@@ -14,9 +15,14 @@ final class ValidatorFactory
     /**
      * @param ContainerInterface $container
      * @return Validator
+     * @throws \Rakit\Validation\RuleQuashException
      */
     public function __invoke(ContainerInterface $container): Validator
     {
-        return new Validator();
+        $validator = new Validator();
+
+        $validator->addValidator('unique', $container->get(UniqueRule::class));
+
+        return $validator;
     }
 }

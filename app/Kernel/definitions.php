@@ -12,6 +12,7 @@ use App\Kernel\Http\Request\RequestImpl;
 use App\Kernel\Http\Response\ControllerResponseFactory;
 use App\Kernel\Http\Router\RouterFactory;
 use App\Kernel\Utils\Logger\LoggerFactory;
+use App\Kernel\Utils\Validation\Rules\UniqueRule;
 use App\Kernel\Utils\Validation\ValidatorFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use FastRoute\Dispatcher;
@@ -70,6 +71,9 @@ return [
 
     // Utils
     Validator::class => factory(ValidatorFactory::class),
+    UniqueRule::class => create(UniqueRule::class)->constructor(
+        get(EntityManagerInterface::class)
+    ),
 
     LoggerInterface::class => factory(LoggerFactory::class),
 ];
