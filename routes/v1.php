@@ -3,5 +3,5 @@
 use FastRoute\RouteCollector;
 
 return function (RouteCollector $r) {
-    $r->addRoute('GET', '/test', 'TestController@test');
+    $r->post('/users', 'AuthController@register');
 };
