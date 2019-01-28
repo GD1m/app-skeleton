@@ -4,6 +4,7 @@ namespace App\Kernel;
 
 use DI\Container;
 use DI\ContainerBuilder;
+use League\BooBoo\BooBoo;
 
 /**
  * Class Application
@@ -58,6 +59,8 @@ final class Application
         $this->setBasePath($basePath);
 
         $this->bindInstance();
+
+        $this->registerErrorHandler();
     }
 
     /**
@@ -108,5 +111,15 @@ final class Application
         self::setInstance($this);
 
         $this->container->set(__CLASS__, $this);
+    }
+
+    /**
+     * @return BooBoo
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
+     */
+    private function registerErrorHandler(): BooBoo
+    {
+        return $this->container->make(BooBoo::class);
     }
 }

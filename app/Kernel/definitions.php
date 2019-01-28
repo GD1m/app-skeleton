@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use App\Kernel\Exceptions\HandlerFactory;
 use App\Kernel\Http\Kernel as HttpKernel;
 use App\Kernel\Http\Middleware\DispatchRequest;
 use App\Kernel\Http\Middleware\HandleRoute;
@@ -9,11 +10,16 @@ use App\Kernel\Http\Request\RequestHandlerFactory;
 use App\Kernel\Http\Request\RequestImpl;
 use App\Kernel\Http\Response\ControllerResponseFactory;
 use App\Kernel\Http\Router\RouterFactory;
+use App\Kernel\Utils\Logger\LoggerFactory;
+use App\Kernel\Utils\Validation\ValidatorFactory;
 use FastRoute\Dispatcher;
+use League\BooBoo\BooBoo;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
+use Rakit\Validation\Validator;
 use Zend\Diactoros\ResponseFactory;
 use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 use function DI\create;
@@ -53,4 +59,11 @@ return [
         get(ContainerInterface::class),
         get(ControllerResponseFactory::class)
     ),
+    // Error Handler
+    BooBoo::class => factory(HandlerFactory::class),
+
+    // Utils
+    Validator::class => factory(ValidatorFactory::class),
+
+    LoggerInterface::class => factory(LoggerFactory::class),
 ];
