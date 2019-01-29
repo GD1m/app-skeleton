@@ -3,9 +3,15 @@
 namespace App\Services\TodoList;
 
 use App\Entity\TodoList;
+use App\Entity\User;
 use App\Services\Validation\Validator;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\UuidInterface;
 
+/**
+ * Class UpdateTodoListService
+ * @package App\Services\TodoList
+ */
 final class UpdateTodoListService
 {
     /**
@@ -16,20 +22,40 @@ final class UpdateTodoListService
      * @var EntityManagerInterface
      */
     private $entityManager;
+    /**
+     * @var SearchTodoListsService
+     */
+    private $searchTodoListsService;
 
     /**
      * @param Validator $validator
      * @param EntityManagerInterface $entityManager
+     * @param SearchTodoListsService $searchTodoListsService
      */
-    public function __construct(Validator $validator, EntityManagerInterface $entityManager)
+    public function __construct(
+        Validator $validator,
+        EntityManagerInterface $entityManager,
+        SearchTodoListsService $searchTodoListsService
+    )
     {
         $this->validator = $validator;
         $this->entityManager = $entityManager;
+        $this->searchTodoListsService = $searchTodoListsService;
     }
 
-    public function update(TodoList $todoList, string $title = null): void
+    /**
+     * @param User $user
+     * @param UuidInterface $id
+     * @param string|null $title
+     * @return TodoList
+     * @throws \App\Exceptions\TodoListNotFoundException
+     * @throws \App\Exceptions\ValidationException
+     */
+    public function update(User $user, UuidInterface $id, string $title = null): TodoList
     {
         $this->validate($title);
+
+        $todoList = $this->searchTodoListsService->findByIdAndUserIdOrFail($id, $user->getId());
 
         $todoList->setTitle($title);
 
@@ -38,6 +64,8 @@ final class UpdateTodoListService
         $this->entityManager->persist($todoList);
 
         $this->entityManager->flush();
+
+        return $todoList;
     }
 
     /**

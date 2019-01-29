@@ -32,7 +32,7 @@ final class SearchTodoListsService
      * @return object|TodoList
      * @throws TodoListNotFoundException
      */
-    public function searchByIdAndUserId(UuidInterface $id, UuidInterface $userId): TodoList
+    public function findByIdAndUserIdOrFail(UuidInterface $id, UuidInterface $userId): TodoList
     {
         $todoList = $this->entityManager
             ->getRepository(TodoList::class)

@@ -2,7 +2,6 @@
 
 namespace App\Http\App\V1\Controller;
 
-use App\Entity\TodoList;
 use App\Exceptions\TodoListNotFoundException;
 use App\Http\App\V1\Transformers\TodoList\TodoListBriefTransformer;
 use App\Http\App\V1\Transformers\TodoList\TodoListTransformer;
@@ -94,13 +93,13 @@ final class TodoController extends Controller
      * @param string $id
      * @return Item
      * @throws TodoListNotFoundException
+     * @throws \App\Exceptions\ValidationException
      */
     public function update(string $id): Item
     {
-        $todoList = $this->getTodoListById($id);
-
-        $this->updateTodoListService->update(
-            $todoList,
+        $todoList = $this->updateTodoListService->update(
+            $this->request->getUser(),
+            Uuid::fromString($id),
             $this->request->post('title')
         );
 
@@ -125,7 +124,10 @@ final class TodoController extends Controller
     public function getTodoList(string $id): Item
     {
         // TODO: add filter by completed field
-        $todoList = $this->getTodoListById($id);
+        $todoList = $this->searchTodoListsService->findByIdAndUserIdOrFail(
+            Uuid::fromString($id),
+            $this->request->getUser()->getId()
+        );
 
         return new Item($todoList, new TodoListTransformer(), 'todoList');
     }
@@ -137,31 +139,13 @@ final class TodoController extends Controller
      */
     public function delete(string $id): array
     {
-        $todoList = $this->getTodoListById($id);
+        $todoList = $this->searchTodoListsService->findByIdAndUserIdOrFail(
+            Uuid::fromString($id),
+            $this->request->getUser()->getId()
+        );
 
         $this->deleteTodoListService->delete($todoList);
 
         return [];
-    }
-
-    /**
-     * @param string $id
-     * @return \App\Entity\TodoList|object
-     * @throws TodoListNotFoundException
-     */
-    private function getTodoListById(string $id): TodoList
-    {
-        try {
-            $uuid = Uuid::fromString($id);
-        } catch (\Throwable $exception) {
-            throw new TodoListNotFoundException('Bad uuid');
-        }
-
-        $todoList = $this->searchTodoListsService->searchByIdAndUserId(
-            $uuid,
-            $this->request->getUser()->getId()
-        );
-
-        return $todoList;
     }
 }
