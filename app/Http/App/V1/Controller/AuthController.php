@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Http\App\V1\Transformers\User\UserTransformer;
 use App\Kernel\Http\Request\Request;
 use App\Services\Auth\LoginUserService;
+use App\Services\Auth\LogoutService;
 use App\Services\Auth\RegisterUserService;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Item;
@@ -22,6 +23,7 @@ final class AuthController extends Controller
      */
     protected $shouldBeAuthorized = [
         'me',
+        'logout',
     ];
 
     /**
@@ -44,21 +46,29 @@ final class AuthController extends Controller
     private $fractal;
 
     /**
+     * @var LogoutService
+     */
+    private $logoutService;
+
+    /**
      * @param Request $request
      * @param RegisterUserService $registerUserService
      * @param LoginUserService $loginUserService
+     * @param LogoutService $logoutService
      * @param Manager $fractal
      */
     public function __construct(
         Request $request,
         RegisterUserService $registerUserService,
         LoginUserService $loginUserService,
+        LogoutService $logoutService,
         Manager $fractal
     ) {
         $this->request = $request;
         $this->registerUserService = $registerUserService;
         $this->loginUserService = $loginUserService;
         $this->fractal = $fractal;
+        $this->logoutService = $logoutService;
     }
 
     /**
@@ -90,6 +100,16 @@ final class AuthController extends Controller
         );
 
         return $this->responseUserWithToken($user);
+    }
+
+    /**
+     * @return array
+     */
+    public function logout(): array
+    {
+        $this->logoutService->logout($this->request->getUser());
+
+        return [];
     }
 
     /**
