@@ -90,7 +90,7 @@ final class AuthorizeRequest implements MiddlewareInterface
     {
         $token = $request->getHeader('Authorization')[0] ?? null;
 
-        if (0 === strpos($token, 'Bearer ')) {
+        if ($token && 0 === strpos($token, 'Bearer ')) {
             $token = substr($token, 7);
         }
 
