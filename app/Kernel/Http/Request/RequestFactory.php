@@ -16,6 +16,15 @@ final class RequestFactory
      */
     public function __invoke(): ServerRequestInterface
     {
-        return ServerRequestFactory::fromGlobals();
+        $parsedBody = json_decode(
+            file_get_contents('php://input'),
+            true
+        );
+
+        return ServerRequestFactory::fromGlobals(
+            null,
+            null,
+            $parsedBody
+        );
     }
 }
