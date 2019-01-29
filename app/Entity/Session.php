@@ -27,6 +27,7 @@ class Session
 
     /**
      * @ManyToOne(targetEntity="User", inversedBy="sessions")
+     * @JoinColumn(nullable=false)
      *
      * @var User
      **/
