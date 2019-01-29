@@ -8,6 +8,7 @@ use App\Http\App\V1\Transformers\TodoList\TodoListTransformer;
 use App\Kernel\Http\Request\Request;
 use App\Services\TodoList\CreateTodoListService;
 use App\Services\TodoList\DeleteTodoListService;
+use App\Services\TodoList\GetTodoListService;
 use App\Services\TodoList\SearchTodoListsService;
 use App\Services\TodoList\UpdateTodoListService;
 use League\Fractal\Resource\Collection;
@@ -53,10 +54,15 @@ final class TodoController extends Controller
      * @var DeleteTodoListService
      */
     private $deleteTodoListService;
+    /**
+     * @var GetTodoListService
+     */
+    private $getTodoListService;
 
     /**
      * @param Request $request
      * @param CreateTodoListService $createTodoListService
+     * @param GetTodoListService $getTodoListService
      * @param SearchTodoListsService $searchTodoListsService
      * @param UpdateTodoListService $updateTodoListService
      * @param DeleteTodoListService $deleteTodoListService
@@ -64,6 +70,7 @@ final class TodoController extends Controller
     public function __construct(
         Request $request,
         CreateTodoListService $createTodoListService,
+        GetTodoListService $getTodoListService,
         SearchTodoListsService $searchTodoListsService,
         UpdateTodoListService $updateTodoListService,
         DeleteTodoListService $deleteTodoListService
@@ -73,6 +80,7 @@ final class TodoController extends Controller
         $this->searchTodoListsService = $searchTodoListsService;
         $this->updateTodoListService = $updateTodoListService;
         $this->deleteTodoListService = $deleteTodoListService;
+        $this->getTodoListService = $getTodoListService;
     }
 
     /**
@@ -120,13 +128,15 @@ final class TodoController extends Controller
      * @param string $id
      * @return Item
      * @throws \App\Exceptions\TodoListNotFoundException
+     * @throws \App\Exceptions\ValidationException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getTodoList(string $id): Item
     {
-        // TODO: add filter by completed field
-        $todoList = $this->searchTodoListsService->findByIdAndUserIdOrFail(
+        $todoList = $this->getTodoListService->get(
+            $this->request->getUser(),
             Uuid::fromString($id),
-            $this->request->getUser()->getId()
+            $this->request->post('completed')
         );
 
         return new Item($todoList, new TodoListTransformer(), 'todoList');

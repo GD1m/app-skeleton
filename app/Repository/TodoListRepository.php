@@ -2,10 +2,10 @@
 
 namespace App\Repository;
 
-use App\Entity\User;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
+use App\Entity\TodoList;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * Class TodoListRepository
@@ -14,25 +14,41 @@ use Doctrine\ORM\EntityRepository;
 final class TodoListRepository extends EntityRepository
 {
     /**
-     * @param User $user
+     * @param UuidInterface $id
+     * @param UuidInterface $userId
      * @param bool|null $completed
-     * @return Collection
+     * @return TodoList
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function searchByUserAndCompletedState(User $user, bool $completed = null): Collection
+    public function searchByUserAndCompletedState(
+        UuidInterface $id,
+        UuidInterface $userId,
+        bool $completed = null
+    ): ? TodoList
     {
-        $expr = Criteria::expr();
-        $criteria = Criteria::create();
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
-        $criteria->where(
-            $expr->eq('user', $user->getId())
-        );
+        $queryBuilder
+            ->select('todoList, actions')
+            ->from(TodoList::class, 'todoList')
+            ->where($queryBuilder->expr()->eq('todoList.id', ':todoListId'))
+            ->andWhere($queryBuilder->expr()->eq('todoList.user', ':userId'))
+            ->setParameter('todoListId', $id)
+            ->setParameter('userId', $userId);
 
-        if (null !== $completed) {
-            $criteria->andWhere(
-                $expr->eq('completed', $completed)
-            );
+        if (null === $completed) {
+            $queryBuilder
+                ->join('todoList.actions', 'actions');
+        } else {
+            $queryBuilder
+                ->leftJoin(
+                    'todoList.actions',
+                    'actions',
+                    Join::WITH,
+                    $queryBuilder->expr()->eq('actions.completed', ':completed'))
+                ->setParameter('completed', $completed);
         }
 
-        return $this->matching($criteria);
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 }

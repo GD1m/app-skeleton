@@ -4,6 +4,7 @@ namespace App\Services\TodoList;
 
 use App\Entity\TodoList;
 use App\Exceptions\TodoListNotFoundException;
+use App\Repository\TodoListRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\UuidInterface;
 
@@ -40,6 +41,28 @@ final class SearchTodoListsService
                 'id' => $id,
                 'user' => $userId,
             ]);
+
+        if (!$todoList) {
+            throw new TodoListNotFoundException(sprintf('Id: %s, UserId: %s', $id, $userId));
+        }
+
+        return $todoList;
+    }
+
+    /**
+     * @param UuidInterface $id
+     * @param UuidInterface $userId
+     * @param bool|null $completed
+     * @return TodoList
+     * @throws TodoListNotFoundException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findWithActionsOrFail(UuidInterface $id, UuidInterface $userId, bool $completed = null): TodoList
+    {
+        /** @var TodoListRepository $repository */
+        $repository = $this->entityManager->getRepository(TodoList::class);
+
+        $todoList = $repository->searchByUserAndCompletedState($id, $userId, $completed);
 
         if (!$todoList) {
             throw new TodoListNotFoundException(sprintf('Id: %s, UserId: %s', $id, $userId));

@@ -73,6 +73,7 @@ final class UpdateActionService
 
     /**
      * @param string|null $title
+     * @param string|bool|null $completed
      * @throws \App\Exceptions\ValidationException
      */
     private function validate(string $title = null, $completed = null): void
