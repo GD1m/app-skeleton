@@ -40,7 +40,7 @@ class Action
     private $todoList;
 
     /**
-     * @Column(type="boolean")
+     * @Column(type="boolean", options={"default": false})
      *
      * @var bool
      */
