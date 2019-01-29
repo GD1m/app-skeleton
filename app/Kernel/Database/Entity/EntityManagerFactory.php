@@ -29,7 +29,7 @@ final class EntityManagerFactory
 
         $basePath = $container->get(Application::class)->basePath();
 
-        $config = Setup::createAnnotationMetadataConfiguration([$basePath . 'app'], $isDevMode);
+        $config = Setup::createAnnotationMetadataConfiguration([$basePath . 'app'], $isDevMode, $basePath . 'tmp');
 
         $connection = require $basePath . 'config/database.php';
 
