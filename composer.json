@@ -1,6 +1,6 @@
 {
-    "name": "gd1m/todo-app",
-    "description": "Simple TODO application",
+    "name": "gd1m/todo-api",
+    "description": "API for Simple TODO application based on TodoMVC",
     "type": "project",
     "license": "MIT",
     "authors": [
