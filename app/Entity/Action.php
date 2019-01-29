@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Traits\Entity\Touchable;
 use DateTime;
 use Ramsey\Uuid\UuidInterface;
 
@@ -14,6 +15,8 @@ use Ramsey\Uuid\UuidInterface;
  */
 class Action
 {
+    use Touchable;
+
     /**
      * @Id
      * @Column(type="uuid", unique=true)

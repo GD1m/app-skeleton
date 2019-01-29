@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Traits\Entity\Touchable;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,6 +17,8 @@ use Ramsey\Uuid\UuidInterface;
  */
 class TodoList
 {
+    use Touchable;
+
     /**
      * @Id
      * @Column(type="uuid", unique=true)
