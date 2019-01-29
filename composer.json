@@ -22,7 +22,11 @@
         "league/booboo": "^2.0",
         "monolog/monolog": "^1.24",
         "doctrine/migrations": "^2.0",
-        "psr/http-server-middleware": "^1.0"
+        "psr/http-server-middleware": "^1.0",
+        "psr/container": "^1.0",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.0",
+        "psr/http-server-handler": "^1.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master"
