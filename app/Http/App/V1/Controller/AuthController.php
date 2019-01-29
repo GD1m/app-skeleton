@@ -3,9 +3,12 @@
 namespace App\Http\App\V1\Controller;
 
 use App\Entity\User;
+use App\Http\App\V1\Transformers\User\UserTransformer;
 use App\Kernel\Http\Request\Request;
 use App\Services\Auth\LoginUserService;
 use App\Services\Auth\RegisterUserService;
+use League\Fractal\Manager;
+use League\Fractal\Resource\Item;
 use Zend\Diactoros\Response\JsonResponse;
 
 /**
@@ -36,18 +39,26 @@ final class AuthController extends Controller
     private $loginUserService;
 
     /**
+     * @var Manager
+     */
+    private $fractal;
+
+    /**
      * @param Request $request
      * @param RegisterUserService $registerUserService
      * @param LoginUserService $loginUserService
+     * @param Manager $fractal
      */
     public function __construct(
         Request $request,
         RegisterUserService $registerUserService,
-        LoginUserService $loginUserService
+        LoginUserService $loginUserService,
+        Manager $fractal
     ) {
         $this->request = $request;
         $this->registerUserService = $registerUserService;
         $this->loginUserService = $loginUserService;
+        $this->fractal = $fractal;
     }
 
     /**
@@ -82,19 +93,13 @@ final class AuthController extends Controller
     }
 
     /**
-     * @return array
+     * @return Item
      */
-    public function me(): array
+    public function me(): Item
     {
         $user = $this->request->getUser();
 
-        return [
-            'user' => [
-                'id' => $user->getId(),
-                'username' => $user->getUsername(),
-                'createdAt' => $user->getCreatedAt()->format('c'),
-            ],
-        ];
+        return new Item($user, new UserTransformer(), 'user');
     }
 
     /**
@@ -103,12 +108,13 @@ final class AuthController extends Controller
      */
     private function responseUserWithToken(User $user): JsonResponse
     {
-        return (new JsonResponse([
-            'user' => [
-                'id' => $user->getId(),
-                'username' => $user->getUsername(),
-                'createdAt' => $user->getCreatedAt()->format('c'),
-            ],
-        ]))->withHeader('Authorization', $user->getSessions()->last()->getToken());
+        $resource = new Item($user, new UserTransformer(), 'user');
+
+        $token = $user->getSessions()->last()->getToken();
+
+        return (new JsonResponse(
+            $this->fractal->createData($resource)->toArray()
+        ))
+            ->withHeader('Authorization', $token);
     }
 }

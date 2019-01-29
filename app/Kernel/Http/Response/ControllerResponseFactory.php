@@ -2,6 +2,8 @@
 
 namespace App\Kernel\Http\Response;
 
+use League\Fractal\Manager;
+use League\Fractal\Resource\ResourceInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -17,13 +19,19 @@ final class ControllerResponseFactory
      * @var ResponseFactoryInterface
      */
     private $responseFactory;
+    /**
+     * @var Manager
+     */
+    private $fractal;
 
     /**
      * @param ResponseFactoryInterface $responseFactory
+     * @param Manager $fractal
      */
-    public function __construct(ResponseFactoryInterface $responseFactory)
+    public function __construct(ResponseFactoryInterface $responseFactory, Manager $fractal)
     {
         $this->responseFactory = $responseFactory;
+        $this->fractal = $fractal;
     }
 
     /**
@@ -34,6 +42,13 @@ final class ControllerResponseFactory
     {
         if (\is_array($responseContent)) {
             return new JsonResponse($responseContent);
+        }
+
+        if ($responseContent instanceof ResourceInterface) {
+
+            return new JsonResponse(
+                $this->fractal->createData($responseContent)->toArray()
+            );
         }
 
         if ($responseContent instanceof ResponseInterface) {

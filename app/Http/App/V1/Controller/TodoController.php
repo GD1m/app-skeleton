@@ -2,11 +2,14 @@
 
 namespace App\Http\App\V1\Controller;
 
-use App\Entity\TodoList;
 use App\Exceptions\TodoListNotFoundException;
+use App\Http\App\V1\Transformers\TodoList\TodoListBriefTransformer;
+use App\Http\App\V1\Transformers\TodoList\TodoListTransformer;
 use App\Kernel\Http\Request\Request;
 use App\Services\TodoList\CreateTodoListService;
 use App\Services\TodoList\SearchTodoListsService;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -49,55 +52,39 @@ final class TodoController extends Controller
     ) {
         $this->request = $request;
         $this->createTodoListService = $createTodoListService;
-
         $this->searchTodoListsService = $searchTodoListsService;
     }
 
     /**
-     * @return array
+     * @return Item
      * @throws \App\Exceptions\ValidationException
      */
-    public function create(): array
+    public function create(): Item
     {
         $todoList = $this->createTodoListService->create(
             $this->request->post('title'),
             $this->request->getUser()
         );
 
-        return [
-            'todoList' => [
-                'id' => $todoList->getId(),
-                'title' => $todoList->getTitle(),
-                'actions' => $todoList->getActions()->toArray(),
-            ],
-        ];
+        return new Item($todoList, new TodoListTransformer(), 'todoList');
     }
 
     /**
-     * @return array
+     * @return Collection
      */
-    public function getTodoLists(): array
+    public function getTodoLists(): Collection
     {
         $todoLists = $this->request->getUser()->getTodoLists();
 
-        return [
-            'todoLists' => array_map(function (TodoList $todoList) {
-                return [
-                    'id' => $todoList->getId(),
-                    'title' => $todoList->getTitle(),
-                    'createdAt' => $todoList->getCreatedAt()->format('c'),
-                    'updatedAt' => $todoList->getUpdatedAt()->format('c'),
-                ];
-            }, $todoLists->toArray())
-        ];
+        return new Collection($todoLists, new TodoListBriefTransformer(), 'todoLists');
     }
 
     /**
      * @param string $id
-     * @return array
+     * @return Item
      * @throws \App\Exceptions\TodoListNotFoundException
      */
-    public function getTodoList(string $id): array
+    public function getTodoList(string $id): Item
     {
         try {
             $uuid = Uuid::fromString($id);
@@ -110,12 +97,7 @@ final class TodoController extends Controller
             $this->request->getUser()->getId()
         );
 
-        return [
-            'todoList' => [
-                'id' => $todoList->getId(),
-                'title' => $todoList->getTitle(),
-                'actions' => $todoList->getActions()->toArray(),
-            ],
-        ];
+        return new Item($todoList, new TodoListTransformer(), 'todoList');
+    }
     }
 }

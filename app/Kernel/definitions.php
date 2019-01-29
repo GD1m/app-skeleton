@@ -9,6 +9,7 @@ use App\Kernel\Http\Request\Request;
 use App\Kernel\Http\Request\RequestFactory;
 use App\Kernel\Http\Request\RequestHandlerFactory;
 use App\Kernel\Http\Request\RequestImpl;
+use App\Kernel\Http\Resource\FractalFactory;
 use App\Kernel\Http\Response\ControllerResponseFactory;
 use App\Kernel\Http\Router\RouterFactory;
 use App\Kernel\Utils\Logger\LoggerFactory;
@@ -16,7 +17,8 @@ use App\Kernel\Utils\Validation\Rules\UniqueRule;
 use App\Kernel\Utils\Validation\ValidatorFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use FastRoute\Dispatcher;
-use League\BooBoo\BooBoo;
+use League\BooBoo\BooBoo as ErrorHandler;
+use League\Fractal\Manager as FractalManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -48,10 +50,13 @@ return [
     ResponseFactoryInterface::class => create(ResponseFactory::class),
 
     ControllerResponseFactory::class => create(ControllerResponseFactory::class)->constructor(
-        get(ResponseFactoryInterface::class)
+        get(ResponseFactoryInterface::class),
+        get(FractalManager::class)
     ),
 
     SapiEmitter::class => create(SapiEmitter::class),
+
+    FractalManager::class => factory(FractalFactory::class),
 
     // Middlewares:
     DispatchRequest::class => create(DispatchRequest::class)->constructor(
@@ -67,7 +72,7 @@ return [
     EntityManagerInterface::class => factory(EntityManagerFactory::class),
 
     // Error Handler
-    BooBoo::class => factory(ExceptionHandlerFactory::class),
+    ErrorHandler::class => factory(ExceptionHandlerFactory::class),
 
     // Utils
     Validator::class => factory(ValidatorFactory::class),
