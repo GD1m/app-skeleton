@@ -2,6 +2,7 @@
 
 namespace App\Kernel\Exceptions;
 
+use App\Exceptions\ActionNotFoundException;
 use App\Exceptions\BadCredentialsException;
 use App\Exceptions\TodoListNotFoundException;
 use App\Exceptions\UnauthorizedException;
@@ -22,6 +23,7 @@ final class LogHandler extends BooBooLogHandler
         BadCredentialsException::class,
         TodoListNotFoundException::class,
         UnauthorizedException::class,
+        ActionNotFoundException::class,
     ];
 
     /**
