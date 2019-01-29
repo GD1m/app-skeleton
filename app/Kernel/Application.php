@@ -59,6 +59,8 @@ final class Application
      */
     public function __construct(string $basePath)
     {
+        $this->setErrorHandlerSettings();
+
         $this->setTimeZone();
 
         $this->container = $this->buildContainer($basePath . 'app/kernel/definitions.php');
@@ -84,6 +86,12 @@ final class Application
     public function basePath(): string
     {
         return $this->basePath;
+    }
+
+    private function setErrorHandlerSettings(): void
+    {
+        error_reporting(E_ALL);
+        ini_set('display_errors', 'On');
     }
 
     private function setTimeZone(): void
