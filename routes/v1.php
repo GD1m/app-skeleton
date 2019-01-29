@@ -7,5 +7,7 @@ return function (RouteCollector $r) {
         $r->post('/users', 'AuthController@register');
         $r->post('/users/login', 'AuthController@login');
         $r->get('/users/me', 'AuthController@me');
+
+        $r->post('/todos', 'TodoController@create');
     });
 };
