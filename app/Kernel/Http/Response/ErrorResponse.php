@@ -38,4 +38,12 @@ final class ErrorResponse
 
         $emitter->emit($this->response);
     }
+
+    /**
+     * @return JsonResponse
+     */
+    public function getInstance(): JsonResponse
+    {
+        return $this->response;
+    }
 }

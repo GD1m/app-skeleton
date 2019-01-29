@@ -3,10 +3,8 @@
 namespace App\Kernel\Http\Middleware;
 
 use App\Kernel\Http\Request\RequestHandlerFactory;
+use App\Kernel\Http\Response\ErrorResponse;
 use FastRoute\Dispatcher;
-use Middlewares\Utils\Factory;
-use Middlewares\Utils\Traits\HasResponseFactory;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,8 +16,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 final class DispatchRequest implements MiddlewareInterface
 {
-    use HasResponseFactory;
-
     /**
      * @var Dispatcher FastRoute dispatcher
      */
@@ -28,12 +24,10 @@ final class DispatchRequest implements MiddlewareInterface
     /**
      * Set the Dispatcher instance and optionally the response factory to return the error responses.
      * @param Dispatcher $router
-     * @param ResponseFactoryInterface|null $responseFactory
      */
-    public function __construct(Dispatcher $router, ResponseFactoryInterface $responseFactory = null)
+    public function __construct(Dispatcher $router)
     {
         $this->router = $router;
-        $this->responseFactory = $responseFactory ?: Factory::getResponseFactory();
     }
 
     /**
@@ -44,7 +38,9 @@ final class DispatchRequest implements MiddlewareInterface
         $route = $this->router->dispatch($request->getMethod(), $request->getUri()->getPath());
 
         if ($route[0] === Dispatcher::NOT_FOUND) {
-            return $this->createResponse(404);
+            return $this->createResponse(404, [
+                'error' => 'Page not found',
+            ]);
         }
 
         if ('OPTIONS' === $request->getMethod()) {
@@ -55,7 +51,9 @@ final class DispatchRequest implements MiddlewareInterface
         }
 
         if ($route[0] === Dispatcher::METHOD_NOT_ALLOWED) {
-            return $this->createResponse(405)
+            return $this->createResponse(405, [
+                'error' => 'Method not allowed'
+            ])
                 ->withHeader('Allow', implode(', ', $route[1]));
         }
 
@@ -76,5 +74,17 @@ final class DispatchRequest implements MiddlewareInterface
     private function setHandler(ServerRequestInterface $request, $handler): ServerRequestInterface
     {
         return $request->withAttribute(RequestHandlerFactory::REQUEST_HANDLER_ATTRIBUTE, $handler);
+    }
+
+    /**
+     * @param int $statusCode
+     * @param array $errorData
+     * @return ResponseInterface
+     */
+    private function createResponse(int $statusCode, $errorData = []): ResponseInterface
+    {
+        $response = new ErrorResponse($errorData, $statusCode);
+
+        return $response->getInstance();
     }
 }
