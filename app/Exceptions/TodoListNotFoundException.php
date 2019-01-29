@@ -3,17 +3,18 @@
 namespace App\Exceptions;
 
 /**
- * Class BadCredentialsException
+ * Class TodoListNotFoundException
  * @package App\Exceptions
  */
-final class BadCredentialsException extends \Exception implements Responsible
+final class TodoListNotFoundException extends \Exception implements Responsible
 {
+
     /**
      * @return int
      */
     public function getStatusCode(): int
     {
-        return 401;
+        return 404;
     }
 
     /**
@@ -22,7 +23,7 @@ final class BadCredentialsException extends \Exception implements Responsible
     public function getErrorData(): array
     {
         return [
-            'error' => 'Invalid Username or Password',
+            'error' => 'Todo List not found',
         ];
     }
 }

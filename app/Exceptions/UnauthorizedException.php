@@ -3,10 +3,10 @@
 namespace App\Exceptions;
 
 /**
- * Class BadCredentialsException
- * @package App\Exceptions
+ * Class UnauthorizedException
+ * @package App\Kernel\Exceptions
  */
-final class BadCredentialsException extends \Exception implements Responsible
+final class UnauthorizedException extends \Exception implements Responsible
 {
     /**
      * @return int
@@ -22,7 +22,7 @@ final class BadCredentialsException extends \Exception implements Responsible
     public function getErrorData(): array
     {
         return [
-            'error' => 'Invalid Username or Password',
+            'error' => 'Unauthorized',
         ];
     }
 }

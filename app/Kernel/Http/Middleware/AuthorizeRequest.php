@@ -5,7 +5,7 @@ namespace App\Kernel\Http\Middleware;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Http\App\V1\Controller\Controller;
-use App\Kernel\Exceptions\UnauthorizedException;
+use App\Exceptions\UnauthorizedException;
 use App\Kernel\Http\Request\Request;
 use App\Kernel\Http\Request\RequestHandlerFactory;
 use Doctrine\ORM\EntityManagerInterface;

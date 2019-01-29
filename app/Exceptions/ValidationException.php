@@ -9,7 +9,7 @@ use Throwable;
  * Class ValidationException
  * @package App\Exceptions
  */
-final class ValidationException extends \Exception
+final class ValidationException extends \Exception implements Responsible
 {
     /**
      * @var ErrorBag
@@ -36,5 +36,23 @@ final class ValidationException extends \Exception
     public function getErrorBag(): ErrorBag
     {
         return $this->errorBag;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return 400;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrorData(): array
+    {
+        return [
+            'error' => $this->getErrorBag()->all()[0],
+        ];
     }
 }
