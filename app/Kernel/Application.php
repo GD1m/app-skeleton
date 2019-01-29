@@ -28,6 +28,11 @@ final class Application
     private $container;
 
     /**
+     * @var string
+     */
+    private $timeZone = 'Etc/Gmt-7'; // TODO: extract it to config
+
+    /**
      * @return Application
      */
     public static function getInstance(): self
@@ -54,6 +59,8 @@ final class Application
      */
     public function __construct(string $basePath)
     {
+        $this->setTimeZone();
+
         $this->container = $this->buildContainer($basePath . 'app/kernel/definitions.php');
 
         $this->setBasePath($basePath);
@@ -64,6 +71,14 @@ final class Application
     }
 
     /**
+     * @return Container
+     */
+    public function container(): Container
+    {
+        return $this->container;
+    }
+
+    /**
      * @return string
      */
     public function basePath(): string
@@ -71,12 +86,9 @@ final class Application
         return $this->basePath;
     }
 
-    /**
-     * @return Container
-     */
-    public function container(): Container
+    private function setTimeZone(): void
     {
-        return $this->container;
+        date_default_timezone_set($this->timeZone);
     }
 
     /**
