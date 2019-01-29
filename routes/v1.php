@@ -16,5 +16,6 @@ return function (RouteCollector $r) {
         $r->delete(sprintf('/todos/{uuid:%s}', Regex::uuid4()), 'TodoController@delete');
 
         $r->post(sprintf('/todos/{uuid:%s}/actions', Regex::uuid4()), 'ActionController@create');
+        $r->patch(sprintf('/todos/actions/{uuid:%s}', Regex::uuid4()), 'ActionController@update');
     });
 };

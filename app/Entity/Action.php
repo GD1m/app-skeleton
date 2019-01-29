@@ -8,7 +8,7 @@ use Ramsey\Uuid\UuidInterface;
 
 /**
  * @Table(name="actions")
- * @Entity
+ * @Entity(repositoryClass="App\Repository\ActionRepository")
  *
  * Class Action
  * @package App\Entity
@@ -47,7 +47,7 @@ class Action
      *
      * @var bool
      */
-    private $completed;
+    private $completed = false;
 
     /**
      * @Column(type="datetime")

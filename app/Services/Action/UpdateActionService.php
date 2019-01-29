@@ -3,16 +3,19 @@
 namespace App\Services\Action;
 
 use App\Entity\Action;
-use App\Entity\TodoList;
+use App\Entity\User;
+use App\Exceptions\ActionNotFoundException;
+use App\Repository\ActionRepository;
 use App\Services\Validation\Validator;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\UuidInterface;
 
 /**
- * Class CreateActionService
+ * Class UpdateActionService
  * @package App\Services\TodoList
  */
-final class CreateActionService
+final class UpdateActionService
 {
     /**
      * @var Validator
@@ -34,25 +37,32 @@ final class CreateActionService
     }
 
     /**
+     * @param User $user
+     * @param UuidInterface $actionId
      * @param string|null $title
-     * @param TodoList $todoList
+     * @param string|bool|null $completed
      * @return Action
+     * @throws ActionNotFoundException
      * @throws \App\Exceptions\ValidationException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function create(string $title = null, TodoList $todoList): Action
+    public function update(User $user, UuidInterface $actionId, string $title = null, $completed = null): Action
     {
-        $this->validate($title);
+        $this->validate($title, $completed);
 
-        $now = new DateTime();
+        /** @var ActionRepository $repository */
+        $repository = $this->entityManager->getRepository(Action::class);
 
-        $action = new Action();
+        $action = $repository->findOneByUserIdAndIdOrFail($user->getId(), $actionId);
 
         $action->setTitle($title);
-        $action->setTodoList($todoList);
-        $action->setCreatedAt($now);
-        $action->setUpdatedAt($now);
+        $action->setUpdatedAt(new DateTime());
 
-        $todoList->touch();
+        if (null !== $completed) {
+            $action->setCompleted((bool)$completed);
+        }
+
+        $action->getTodoList()->touch();
 
         $this->entityManager->persist($action);
 
@@ -65,14 +75,16 @@ final class CreateActionService
      * @param string|null $title
      * @throws \App\Exceptions\ValidationException
      */
-    private function validate(string $title = null): void
+    private function validate(string $title = null, $completed = null): void
     {
         $this->validator
             ->setData([
                 'title' => $title,
+                'completed' => $completed,
             ])
             ->setRules([
-                'title' => 'required|min:4|max:50',
+                'title' => 'min:4|max:50',
+                'completed' => 'in:1,0',
             ])
             ->validate();
     }

@@ -3,10 +3,12 @@
 namespace App\Http\App\V1\Controller;
 
 use App\Entity\TodoList;
+use App\Exceptions\ActionNotFoundException;
 use App\Exceptions\TodoListNotFoundException;
 use App\Http\App\V1\Transformers\Action\ActionTransformer;
 use App\Kernel\Http\Request\Request;
 use App\Services\Action\CreateActionService;
+use App\Services\Action\UpdateActionService;
 use App\Services\TodoList\SearchTodoListsService;
 use League\Fractal\Resource\Item;
 use Ramsey\Uuid\Uuid;
@@ -42,18 +44,26 @@ final class ActionController extends Controller
     private $searchTodoListsService;
 
     /**
+     * @var UpdateActionService
+     */
+    private $updateActionService;
+
+    /**
      * @param Request $request
      * @param CreateActionService $createActionService
      * @param SearchTodoListsService $searchTodoListsService
+     * @param UpdateActionService $updateActionService
      */
     public function __construct(
         Request $request,
         CreateActionService $createActionService,
-        SearchTodoListsService $searchTodoListsService
+        SearchTodoListsService $searchTodoListsService,
+        UpdateActionService $updateActionService
     ) {
         $this->request = $request;
         $this->createActionService = $createActionService;
         $this->searchTodoListsService = $searchTodoListsService;
+        $this->updateActionService = $updateActionService;
     }
 
     /**
@@ -72,14 +82,22 @@ final class ActionController extends Controller
         return new Item($action, new ActionTransformer(), 'action');
     }
 
-    public function update(): Item
+    public function update(string $actionId): Item
     {
+        $action = $this->updateActionService->update(
+            $this->request->getUser(),
+            Uuid::fromString($actionId),
+            $this->request->post('title'),
+            $this->request->post('completed')
+        );
 
+        return new Item($action, new ActionTransformer(), 'action');
     }
 
-    public function delete(): array
+    public function delete(string $todoListUuid, string $actionUuid): array
     {
 
+        return [];
     }
 
     /**
@@ -95,7 +113,7 @@ final class ActionController extends Controller
             throw new TodoListNotFoundException('Bad uuid');
         }
 
-        $todoList = $this->searchTodoListsService->searchByIdAndUserId(
+        $todoList = $this->searchTodoListsService->findByIdAndUserIdOrFail(
             $uuid,
             $this->request->getUser()->getId()
         );
