@@ -37,24 +37,22 @@ final class DispatchRequest implements MiddlewareInterface
     {
         $route = $this->router->dispatch($request->getMethod(), $request->getUri()->getPath());
 
+        if ('OPTIONS' === $request->getMethod()) {
+            return $this->createResponse(200)
+                ->withHeader('Access-Control-Allow-Methods', implode(', ', $route[1] ?? []) . ', OPTIONS');
+        }
+
         if ($route[0] === Dispatcher::NOT_FOUND) {
             return $this->createResponse(404, [
                 'error' => 'Page not found',
             ]);
         }
 
-        if ('OPTIONS' === $request->getMethod()) {
-            return $this->createResponse(200)
-                ->withHeader('Access-Control-Allow-Methods', implode(', ', $route[1]) . ', OPTIONS')
-                ->withHeader('Access-Control-Allow-Origin', '*')
-                ->withHeader('Access-Control-Allow-Headers', $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
-        }
-
         if ($route[0] === Dispatcher::METHOD_NOT_ALLOWED) {
             return $this->createResponse(405, [
                 'error' => 'Method not allowed'
             ])
-                ->withHeader('Allow', implode(', ', $route[1]));
+                ->withHeader('Access-Control-Allow-Methods', implode(', ', $route[1]));
         }
 
         $request = $request->withAttribute('params', $route[2]);

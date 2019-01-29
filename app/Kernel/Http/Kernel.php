@@ -39,5 +39,8 @@ final class Kernel
     private function setCorsHeaders(): void
     {
         header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Expose-Headers: Authorization');
+        header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
+
     }
 }
