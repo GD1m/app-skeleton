@@ -2,8 +2,8 @@
 
 namespace App\Kernel\Http\Resource;
 
+use App\Kernel\Http\Resource\Serializer\NamedDataArraySerializer;
 use League\Fractal\Manager;
-use League\Fractal\Serializer\ArraySerializer;
 
 /**
  * Class FractalFactory
@@ -18,7 +18,7 @@ final class FractalFactory
     {
         $fractal = new Manager();
 
-        $fractal->setSerializer(new ArraySerializer());
+        $fractal->setSerializer(new NamedDataArraySerializer());
 
         return $fractal;
     }
