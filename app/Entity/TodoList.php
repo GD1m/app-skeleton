@@ -45,7 +45,7 @@ class TodoList
     private $user;
 
     /**
-     * @OneToMany(targetEntity="Action", mappedBy="todoList")
+     * @OneToMany(targetEntity="Action", mappedBy="todoList", cascade="remove")
      *
      * @var Action[]|Collection
      **/

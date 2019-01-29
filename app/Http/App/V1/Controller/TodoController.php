@@ -8,6 +8,7 @@ use App\Http\App\V1\Transformers\TodoList\TodoListBriefTransformer;
 use App\Http\App\V1\Transformers\TodoList\TodoListTransformer;
 use App\Kernel\Http\Request\Request;
 use App\Services\TodoList\CreateTodoListService;
+use App\Services\TodoList\DeleteTodoListService;
 use App\Services\TodoList\SearchTodoListsService;
 use App\Services\TodoList\UpdateTodoListService;
 use League\Fractal\Resource\Collection;
@@ -28,6 +29,7 @@ final class TodoController extends Controller
         'update',
         'getTodoLists',
         'getTodoList',
+        'delete',
     ];
     /**
      * @var Request
@@ -49,21 +51,29 @@ final class TodoController extends Controller
     private $updateTodoListService;
 
     /**
+     * @var DeleteTodoListService
+     */
+    private $deleteTodoListService;
+
+    /**
      * @param Request $request
      * @param CreateTodoListService $createTodoListService
      * @param SearchTodoListsService $searchTodoListsService
      * @param UpdateTodoListService $updateTodoListService
+     * @param DeleteTodoListService $deleteTodoListService
      */
     public function __construct(
         Request $request,
         CreateTodoListService $createTodoListService,
         SearchTodoListsService $searchTodoListsService,
-        UpdateTodoListService $updateTodoListService
+        UpdateTodoListService $updateTodoListService,
+        DeleteTodoListService $deleteTodoListService
     ) {
         $this->request = $request;
         $this->createTodoListService = $createTodoListService;
         $this->searchTodoListsService = $searchTodoListsService;
         $this->updateTodoListService = $updateTodoListService;
+        $this->deleteTodoListService = $deleteTodoListService;
     }
 
     /**
@@ -114,9 +124,24 @@ final class TodoController extends Controller
      */
     public function getTodoList(string $id): Item
     {
+        // TODO: add filter by completed field
         $todoList = $this->getTodoListById($id);
 
         return new Item($todoList, new TodoListTransformer(), 'todoList');
+    }
+
+    /**
+     * @param string $id
+     * @return array
+     * @throws TodoListNotFoundException
+     */
+    public function delete(string $id): array
+    {
+        $todoList = $this->getTodoListById($id);
+
+        $this->deleteTodoListService->delete($todoList);
+
+        return [];
     }
 
     /**
