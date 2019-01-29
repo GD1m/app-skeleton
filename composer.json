@@ -21,7 +21,8 @@
         "moontoast/math": "^1.1",
         "rakit/validation": "^1.1",
         "league/booboo": "^2.0",
-        "monolog/monolog": "^1.24"
+        "monolog/monolog": "^1.24",
+        "doctrine/migrations": "^2.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master"
