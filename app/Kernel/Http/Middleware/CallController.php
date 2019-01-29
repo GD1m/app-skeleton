@@ -32,7 +32,9 @@ final class CallController implements MiddlewareInterface
         $controller = $request->getAttribute(RequestHandlerFactory::CONTROLLER_ATTRIBUTE);
         $method = $request->getAttribute(RequestHandlerFactory::METHOD_ATTRIBUTE);
 
-        $responseContent = $controller->{$method}();
+        $params = $request->getAttribute('params');
+
+        $responseContent = \call_user_func_array([$controller, $method], $params);
 
         return $this->processResponseContent($responseContent);
     }

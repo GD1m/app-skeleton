@@ -59,9 +59,7 @@ final class DispatchRequest implements MiddlewareInterface
                 ->withHeader('Allow', implode(', ', $route[1]));
         }
 
-        foreach ($route[2] as $name => $value) {
-            $request = $request->withAttribute($name, $value);
-        }
+        $request = $request->withAttribute('params', $route[2]);
 
         $request = $this->setHandler($request, $route[1]);
 
