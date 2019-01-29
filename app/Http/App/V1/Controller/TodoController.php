@@ -2,12 +2,14 @@
 
 namespace App\Http\App\V1\Controller;
 
+use App\Entity\TodoList;
 use App\Exceptions\TodoListNotFoundException;
 use App\Http\App\V1\Transformers\TodoList\TodoListBriefTransformer;
 use App\Http\App\V1\Transformers\TodoList\TodoListTransformer;
 use App\Kernel\Http\Request\Request;
 use App\Services\TodoList\CreateTodoListService;
 use App\Services\TodoList\SearchTodoListsService;
+use App\Services\TodoList\UpdateTodoListService;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use Ramsey\Uuid\Uuid;
@@ -23,6 +25,7 @@ final class TodoController extends Controller
      */
     protected $shouldBeAuthorized = [
         'create',
+        'update',
         'getTodoLists',
         'getTodoList',
     ];
@@ -41,18 +44,26 @@ final class TodoController extends Controller
     private $searchTodoListsService;
 
     /**
+     * @var UpdateTodoListService
+     */
+    private $updateTodoListService;
+
+    /**
      * @param Request $request
      * @param CreateTodoListService $createTodoListService
      * @param SearchTodoListsService $searchTodoListsService
+     * @param UpdateTodoListService $updateTodoListService
      */
     public function __construct(
         Request $request,
         CreateTodoListService $createTodoListService,
-        SearchTodoListsService $searchTodoListsService
+        SearchTodoListsService $searchTodoListsService,
+        UpdateTodoListService $updateTodoListService
     ) {
         $this->request = $request;
         $this->createTodoListService = $createTodoListService;
         $this->searchTodoListsService = $searchTodoListsService;
+        $this->updateTodoListService = $updateTodoListService;
     }
 
     /**
@@ -64,6 +75,23 @@ final class TodoController extends Controller
         $todoList = $this->createTodoListService->create(
             $this->request->post('title'),
             $this->request->getUser()
+        );
+
+        return new Item($todoList, new TodoListTransformer(), 'todoList');
+    }
+
+    /**
+     * @param string $id
+     * @return Item
+     * @throws TodoListNotFoundException
+     */
+    public function update(string $id): Item
+    {
+        $todoList = $this->getTodoListById($id);
+
+        $this->updateTodoListService->update(
+            $todoList,
+            $this->request->post('title')
         );
 
         return new Item($todoList, new TodoListTransformer(), 'todoList');
@@ -86,6 +114,18 @@ final class TodoController extends Controller
      */
     public function getTodoList(string $id): Item
     {
+        $todoList = $this->getTodoListById($id);
+
+        return new Item($todoList, new TodoListTransformer(), 'todoList');
+    }
+
+    /**
+     * @param string $id
+     * @return \App\Entity\TodoList|object
+     * @throws TodoListNotFoundException
+     */
+    private function getTodoListById(string $id): TodoList
+    {
         try {
             $uuid = Uuid::fromString($id);
         } catch (\Throwable $exception) {
@@ -97,7 +137,6 @@ final class TodoController extends Controller
             $this->request->getUser()->getId()
         );
 
-        return new Item($todoList, new TodoListTransformer(), 'todoList');
-    }
+        return $todoList;
     }
 }

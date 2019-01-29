@@ -12,5 +12,6 @@ return function (RouteCollector $r) {
         $r->post('/todos', 'TodoController@create');
         $r->get('/todos', 'TodoController@getTodoLists');
         $r->get(sprintf('/todos/{uuid:%s}', Regex::uuid4()), 'TodoController@getTodoList');
+        $r->patch(sprintf('/todos/{uuid:%s}', Regex::uuid4()), 'TodoController@update');
     });
 };

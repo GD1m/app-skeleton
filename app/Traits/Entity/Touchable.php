@@ -12,8 +12,17 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 trait Touchable
 {
-    public function touch(): void
+    /**
+     * @param bool $forceSave
+     */
+    public function touch(bool $forceSave = false): void
     {
+        $this->setUpdatedAt(new DateTime());
+
+        if (!$forceSave) {
+            return;
+        }
+
         $app = Application::getInstance();
 
         $queryBuilder = $app->container()
@@ -26,7 +35,7 @@ trait Touchable
             ->where(
                 $queryBuilder->expr()->eq('t.id', ':id')
             )
-            ->setParameter('updatedAt', new DateTime())
+            ->setParameter('updatedAt', $this->getUpdatedAt())
             ->setParameter('id', $this->getId())
             ->getQuery();
 
