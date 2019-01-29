@@ -20,7 +20,6 @@ final class UserTransformer extends TransformerAbstract
     public function transform(User $user): array
     {
         return [
-            'id' => $user->getId(),
             'username' => $user->getUsername(),
             'createdAt' => $user->getCreatedAt()->format('c'),
         ];
