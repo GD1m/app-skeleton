@@ -2,30 +2,37 @@
 
 namespace App\Repository;
 
-use App\Entity\Session;
+use App\Entity\User;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Ramsey\Uuid\UuidInterface;
 
 /**
- * Class SessionRepository
+ * Class TodoListRepository
  * @package App\Repository
  */
-final class SessionRepository extends EntityRepository
+final class TodoListRepository extends EntityRepository
 {
     /**
-     * @param UuidInterface $userId
+     * @param User $user
+     * @param bool|null $completed
+     * @return Collection
      */
-    public function destroySessions(UuidInterface $userId): void
+    public function searchByUserAndCompletedState(User $user, bool $completed = null): Collection
     {
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $expr = Criteria::expr();
+        $criteria = Criteria::create();
 
-        $queryBuilder
-            ->delete(Session::class, 't')
-            ->where(
-                $queryBuilder->expr()->eq('t.user', ':userId')
-            )
-            ->setParameter('userId', $userId);
+        $criteria->where(
+            $expr->eq('user', $user->getId())
+        );
 
-        $queryBuilder->getQuery()->execute();
+        if (null !== $completed) {
+            $criteria->andWhere(
+                $expr->eq('completed', $completed)
+            );
+        }
+
+        return $this->matching($criteria);
     }
 }

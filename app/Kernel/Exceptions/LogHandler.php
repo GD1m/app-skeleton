@@ -2,6 +2,9 @@
 
 namespace App\Kernel\Exceptions;
 
+use App\Exceptions\BadCredentialsException;
+use App\Exceptions\TodoListNotFoundException;
+use App\Exceptions\UnauthorizedException;
 use App\Exceptions\ValidationException;
 use League\BooBoo\Handler\LogHandler as BooBooLogHandler;
 
@@ -16,6 +19,9 @@ final class LogHandler extends BooBooLogHandler
      */
     private $shouldNotBeLogged = [
         ValidationException::class,
+        BadCredentialsException::class,
+        TodoListNotFoundException::class,
+        UnauthorizedException::class,
     ];
 
     /**
