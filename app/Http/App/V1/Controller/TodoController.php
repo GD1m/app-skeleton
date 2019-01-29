@@ -77,7 +77,7 @@ final class TodoController extends Controller
             $this->request->getUser()
         );
 
-        return new Item($todoList, new TodoListTransformer(), 'todoList');
+        return new Item($todoList, new TodoListBriefTransformer(), 'todoList');
     }
 
     /**
