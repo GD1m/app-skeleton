@@ -5,25 +5,24 @@ namespace App\Entity;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
+ * @Table(name="users")
+ * @Entity
+ *
  * Class User
  * @package App
- *
- * @Entity
- * @Table(name="users")
  */
 class User
 {
     /**
-     * @var UuidInterface
-     *
      * @Id
      * @Column(type="uuid", unique=true)
      * @GeneratedValue(strategy="CUSTOM")
      * @CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
+     *
+     * @var UuidInterface
      */
     private $id;
 

@@ -8,8 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\UuidInterface;
 
 /**
- * @Entity
  * @Table(name="todo_lists")
+ * @Entity(repositoryClass="App\Repository\TodoListRepository")
  *
  * Class TodoList
  * @package App\Entity
@@ -17,12 +17,12 @@ use Ramsey\Uuid\UuidInterface;
 class TodoList
 {
     /**
-     * @var UuidInterface
-     *
      * @Id
      * @Column(type="uuid", unique=true)
      * @GeneratedValue(strategy="CUSTOM")
      * @CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
+     *
+     * @var UuidInterface
      */
     private $id;
 

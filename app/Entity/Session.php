@@ -6,22 +6,21 @@ use DateTime;
 use Ramsey\Uuid\UuidInterface;
 
 /**
- * Class Session
- * @package App
- *
- * @Entity
  * @Table(name="sessions")
  * @Entity(repositoryClass="App\Repository\SessionRepository")
+ *
+ * Class Session
+ * @package App
  */
 class Session
 {
     /**
-     * @var UuidInterface
-     *
      * @Id
      * @Column(type="uuid", unique=true)
      * @GeneratedValue(strategy="CUSTOM")
      * @CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
+     *
+     * @var UuidInterface
      */
     private $id;
 

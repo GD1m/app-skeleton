@@ -6,8 +6,8 @@ use DateTime;
 use Ramsey\Uuid\UuidInterface;
 
 /**
- * @Entity
  * @Table(name="actions")
+ * @Entity
  *
  * Class Action
  * @package App\Entity
@@ -15,12 +15,12 @@ use Ramsey\Uuid\UuidInterface;
 class Action
 {
     /**
-     * @var UuidInterface
-     *
      * @Id
      * @Column(type="uuid", unique=true)
      * @GeneratedValue(strategy="CUSTOM")
      * @CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
+     *
+     * @var UuidInterface
      */
     private $id;
 
