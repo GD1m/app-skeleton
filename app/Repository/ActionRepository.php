@@ -25,7 +25,7 @@ final class ActionRepository extends EntityRepository
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
         $query = $queryBuilder
-            ->select('action')
+            ->select('action, todoList')
             ->from(Action::class, 'action')
             ->join('action.todoList', 'todoList')
             ->where($queryBuilder->expr()->eq('action.id', ':actionId'))
