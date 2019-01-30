@@ -63,4 +63,24 @@ final class ActionRepository extends EntityRepository
 
         $queryBuilder->getQuery()->execute();
     }
+
+    /**
+     * @param UuidInterface $id
+     * @param bool $completed
+     */
+    public function changeCompletedStateByTodoListId(UuidInterface $id, bool $completed): void
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+
+        $queryBuilder
+            ->update(Action::class, 'a')
+            ->where(
+                $queryBuilder->expr()->eq('a.todoList', ':todoListId')
+            )
+            ->set('a.completed', ':completed')
+            ->setParameter('todoListId', $id)
+            ->setParameter('completed', $completed);
+
+        $queryBuilder->getQuery()->execute();
+    }
 }

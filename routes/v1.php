@@ -14,6 +14,10 @@ return function (RouteCollector $r) {
         $r->get('/todos', 'TodoController@getTodoLists');
         $r->get(sprintf('/todos/{uuid:%s}', Regex::uuid4()), 'TodoController@getTodoList');
         $r->patch(sprintf('/todos/{uuid:%s}', Regex::uuid4()), 'TodoController@update');
+        $r->patch(
+            sprintf('/todos/{uuid:%s}/actions', Regex::uuid4()),
+            'TodoController@updateAllActions'
+        );
         $r->delete(sprintf('/todos/{uuid:%s}', Regex::uuid4()), 'TodoController@delete');
         $r->delete(
             sprintf('/todos/{uuid:%s}/actions/completed', Regex::uuid4()),

@@ -6,6 +6,7 @@ use App\Exceptions\TodoListNotFoundException;
 use App\Http\App\V1\Transformers\TodoList\TodoListBriefTransformer;
 use App\Http\App\V1\Transformers\TodoList\TodoListTransformer;
 use App\Kernel\Http\Request\Request;
+use App\Services\Action\UpdateActionsService;
 use App\Services\TodoList\ClearCompletedActionsService;
 use App\Services\TodoList\CreateTodoListService;
 use App\Services\TodoList\DeleteTodoListService;
@@ -28,6 +29,7 @@ final class TodoController extends Controller
     protected $shouldBeAuthorized = [
         'create',
         'update',
+        'updateAllActions',
         'getTodoLists',
         'getTodoList',
         'delete',
@@ -67,6 +69,11 @@ final class TodoController extends Controller
     private $clearCompletedActionsService;
 
     /**
+     * @var UpdateActionsService
+     */
+    private $updateActionsService;
+
+    /**
      * @param Request $request
      * @param CreateTodoListService $createTodoListService
      * @param GetTodoListService $getTodoListService
@@ -74,6 +81,7 @@ final class TodoController extends Controller
      * @param UpdateTodoListService $updateTodoListService
      * @param DeleteTodoListService $deleteTodoListService
      * @param ClearCompletedActionsService $clearCompletedActionsService
+     * @param UpdateActionsService $updateActionsService
      */
     public function __construct(
         Request $request,
@@ -82,7 +90,8 @@ final class TodoController extends Controller
         SearchTodoListsService $searchTodoListsService,
         UpdateTodoListService $updateTodoListService,
         DeleteTodoListService $deleteTodoListService,
-        ClearCompletedActionsService $clearCompletedActionsService
+        ClearCompletedActionsService $clearCompletedActionsService,
+        UpdateActionsService $updateActionsService
     ) {
         $this->request = $request;
         $this->createTodoListService = $createTodoListService;
@@ -91,6 +100,7 @@ final class TodoController extends Controller
         $this->deleteTodoListService = $deleteTodoListService;
         $this->getTodoListService = $getTodoListService;
         $this->clearCompletedActionsService = $clearCompletedActionsService;
+        $this->updateActionsService = $updateActionsService;
     }
 
     /**
@@ -119,6 +129,23 @@ final class TodoController extends Controller
             $this->request->getUser(),
             Uuid::fromString($id),
             $this->request->post('title')
+        );
+
+        return new Item($todoList, new TodoListTransformer(), 'todoList');
+    }
+
+    /**
+     * @param string $id
+     * @return Item
+     * @throws TodoListNotFoundException
+     * @throws \App\Exceptions\ValidationException
+     */
+    public function updateAllActions(string $id): Item
+    {
+        $todoList = $this->updateActionsService->changeCompletedByTodoListId(
+            $this->request->getUser(),
+            Uuid::fromString($id),
+            $this->request->post('completed')
         );
 
         return new Item($todoList, new TodoListTransformer(), 'todoList');
