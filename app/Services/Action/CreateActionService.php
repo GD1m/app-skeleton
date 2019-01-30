@@ -72,7 +72,7 @@ final class CreateActionService
                 'title' => $title,
             ])
             ->setRules([
-                'title' => 'required|min:4|max:50',
+                'title' => 'required|min:1|max:50',
             ])
             ->validate();
     }

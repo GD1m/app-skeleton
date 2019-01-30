@@ -55,7 +55,10 @@ final class UpdateActionService
 
         $action = $repository->findOneByUserIdAndIdOrFail($user->getId(), $actionId);
 
-        $action->setTitle($title);
+        if ($title) {
+            $action->setTitle($title);
+        }
+
         $action->setUpdatedAt(new DateTime());
 
         if (null !== $completed) {
@@ -84,7 +87,7 @@ final class UpdateActionService
                 'completed' => $completed,
             ])
             ->setRules([
-                'title' => 'min:4|max:50',
+                'title' => 'min:1|max:50',
                 'completed' => 'in:1,0',
             ])
             ->validate();
