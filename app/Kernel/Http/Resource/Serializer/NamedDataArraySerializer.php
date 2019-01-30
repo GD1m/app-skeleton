@@ -20,7 +20,7 @@ final class NamedDataArraySerializer extends ArraySerializer
      */
     public function collection($resourceKey, array $data): array
     {
-        return [$resourceKey => $data];
+        return [$resourceKey ?? 'data' => $data];
     }
 
     /**
@@ -33,7 +33,7 @@ final class NamedDataArraySerializer extends ArraySerializer
      */
     public function item($resourceKey, array $data): array
     {
-        return [$resourceKey => $data];
+        return [$resourceKey ?? 'data' => $data];
     }
 
     /**
