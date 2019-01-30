@@ -62,7 +62,7 @@ final class SearchTodoListsService
         /** @var TodoListRepository $repository */
         $repository = $this->entityManager->getRepository(TodoList::class);
 
-        $todoList = $repository->searchByUserAndCompletedState($id, $userId, $completed);
+        $todoList = $repository->findWithActionsByUserAndCompletedState($id, $userId, $completed);
 
         if (!$todoList) {
             throw new TodoListNotFoundException(sprintf('Id: %s, UserId: %s', $id, $userId));

@@ -42,4 +42,25 @@ final class ActionRepository extends EntityRepository
 
         return $action;
     }
+
+    /**
+     * @param UuidInterface $id
+     */
+    public function deleteCompletedActionsByTodoListId(UuidInterface $id): void
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+
+        $queryBuilder
+            ->delete(Action::class, 'a')
+            ->where(
+                $queryBuilder->expr()->eq('a.todoList', ':todoListId')
+            )
+            ->andWhere(
+                $queryBuilder->expr()->eq('a.completed', ':completed')
+            )
+            ->setParameter('todoListId', $id)
+            ->setParameter('completed', true);
+
+        $queryBuilder->getQuery()->execute();
+    }
 }

@@ -44,11 +44,11 @@ final class GetTodoListService
      * @throws \App\Exceptions\ValidationException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function get(User $user, UuidInterface $id, $completed = null): TodoList
+    public function getWithActions(User $user, UuidInterface $id, $completed = null): TodoList
     {
-        $this->validate($completed);
-
         if (null !== $completed) {
+            $this->validate($completed);
+
             $completed = (bool)$completed;
         }
 

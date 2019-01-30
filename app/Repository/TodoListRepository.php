@@ -20,7 +20,7 @@ final class TodoListRepository extends EntityRepository
      * @return TodoList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function searchByUserAndCompletedState(
+    public function findWithActionsByUserAndCompletedState(
         UuidInterface $id,
         UuidInterface $userId,
         bool $completed = null

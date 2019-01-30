@@ -2,7 +2,6 @@
 
 namespace App\Http\App\V1\Controller;
 
-use App\Entity\TodoList;
 use App\Exceptions\TodoListNotFoundException;
 use App\Http\App\V1\Transformers\Action\ActionTransformer;
 use App\Kernel\Http\Request\Request;

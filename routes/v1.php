@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
-use FastRoute\RouteCollector;
 use App\Kernel\Utils\String\Regex;
+use FastRoute\RouteCollector;
 
 return function (RouteCollector $r) {
     $r->addGroup('/app/v1', function (RouteCollector $r) {
@@ -15,6 +15,10 @@ return function (RouteCollector $r) {
         $r->get(sprintf('/todos/{uuid:%s}', Regex::uuid4()), 'TodoController@getTodoList');
         $r->patch(sprintf('/todos/{uuid:%s}', Regex::uuid4()), 'TodoController@update');
         $r->delete(sprintf('/todos/{uuid:%s}', Regex::uuid4()), 'TodoController@delete');
+        $r->delete(
+            sprintf('/todos/{uuid:%s}/actions/completed', Regex::uuid4()),
+            'TodoController@deleteCompletedActions'
+        );
 
         $r->post(sprintf('/todos/{uuid:%s}/actions', Regex::uuid4()), 'ActionController@create');
         $r->patch(sprintf('/todos/actions/{uuid:%s}', Regex::uuid4()), 'ActionController@update');
