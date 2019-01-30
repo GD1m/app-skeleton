@@ -38,7 +38,7 @@ final class TodoListRepository extends EntityRepository
 
         if (null === $completed) {
             $queryBuilder
-                ->join('todoList.actions', 'actions');
+                ->leftJoin('todoList.actions', 'actions');
         } else {
             $queryBuilder
                 ->leftJoin(
