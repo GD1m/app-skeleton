@@ -46,6 +46,7 @@ class TodoList
 
     /**
      * @OneToMany(targetEntity="Action", mappedBy="todoList", cascade="remove")
+     * @OrderBy({"createdAt" = "ASC"})
      *
      * @var Action[]|Collection
      **/

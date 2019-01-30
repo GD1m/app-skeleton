@@ -56,6 +56,7 @@ class User
 
     /**
      * @OneToMany(targetEntity="TodoList", mappedBy="user")
+     * @OrderBy({"createdAt" = "DESC"})
      *
      * @var TodoList[]|Collection
      **/
