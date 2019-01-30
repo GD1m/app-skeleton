@@ -136,7 +136,7 @@ final class TodoController extends Controller
         $todoList = $this->getTodoListService->get(
             $this->request->getUser(),
             Uuid::fromString($id),
-            $this->request->post('completed')
+            $this->request->get('completed')
         );
 
         return new Item($todoList, new TodoListTransformer(), 'todoList');
