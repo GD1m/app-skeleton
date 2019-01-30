@@ -22,10 +22,11 @@ final class EntityManagerFactory
      * @return EntityManagerInterface
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\ORM\ORMException
+     * @throws \App\Exceptions\ConfigMissedException
      */
     public function __invoke(ContainerInterface $container): EntityManagerInterface
     {
-        $isDevMode = true; // TODO extract it
+        $isDevMode = 'production' !== $container->get(Application::class)->environment();
 
         $basePath = $container->get(Application::class)->basePath();
 

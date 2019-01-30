@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Kernel\Database\Entity\EntityManagerFactory;
+use App\Kernel\Env\DotenvFactory;
 use App\Kernel\Exceptions\ExceptionHandlerFactory;
 use App\Kernel\Http\Kernel as HttpKernel;
 use App\Kernel\Http\Middleware\DispatchRequest;
@@ -16,6 +17,7 @@ use App\Kernel\Utils\Logger\LoggerFactory;
 use App\Kernel\Utils\Validation\Rules\UniqueRule;
 use App\Kernel\Utils\Validation\ValidatorFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use Dotenv\Dotenv;
 use FastRoute\Dispatcher;
 use League\BooBoo\BooBoo as ErrorHandler;
 use League\Fractal\Manager as FractalManager;
@@ -32,6 +34,9 @@ use function DI\factory;
 use function DI\get;
 
 return [
+    // Environment:
+    Dotenv::class => factory(DotenvFactory::class),
+
     // Http:
     Dispatcher::class => factory(RouterFactory::class),
 
@@ -71,10 +76,10 @@ return [
     // Database:
     EntityManagerInterface::class => factory(EntityManagerFactory::class),
 
-    // Error Handler
+    // Error Handler:
     ErrorHandler::class => factory(ExceptionHandlerFactory::class),
 
-    // Utils
+    // Utils:
     Validator::class => factory(ValidatorFactory::class),
     UniqueRule::class => create(UniqueRule::class)->constructor(
         get(EntityManagerInterface::class)

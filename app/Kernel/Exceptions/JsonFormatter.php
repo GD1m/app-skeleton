@@ -3,6 +3,7 @@
 namespace App\Kernel\Exceptions;
 
 use App\Exceptions\Responsible;
+use App\Kernel\Application;
 use App\Kernel\Http\Response\ErrorResponse;
 use League\BooBoo\Formatter\JsonFormatter as BooBooJsonFormatter;
 
@@ -16,6 +17,7 @@ final class JsonFormatter extends BooBooJsonFormatter
      * @param \Throwable $e
      * @throws \DI\DependencyException
      * @throws \DI\NotFoundException
+     * @throws \App\Exceptions\ConfigMissedException
      */
     public function format($e)
     {
@@ -24,6 +26,8 @@ final class JsonFormatter extends BooBooJsonFormatter
         if ($e instanceof Responsible) {
             $statusCode = $e->getStatusCode();
             $data = $e->getErrorData();
+        } elseif ('production' === Application::getInstance()->environment()) {
+            $data = ['error' => 'Something went wrong'];
         } elseif ($e instanceof \ErrorException) {
             $data = $this->handleErrors($e);
         } else {

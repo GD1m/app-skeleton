@@ -2,8 +2,10 @@
 
 namespace App\Kernel;
 
+use App\Exceptions\ConfigMissedException;
 use DI\Container;
 use DI\ContainerBuilder;
+use Dotenv\Dotenv;
 use League\BooBoo\BooBoo;
 
 /**
@@ -28,9 +30,9 @@ final class Application
     private $container;
 
     /**
-     * @var string
+     * @var array
      */
-    private $timeZone = 'Etc/Gmt-7'; // TODO: extract it to config
+    private $config;
 
     /**
      * @return Application
@@ -61,8 +63,6 @@ final class Application
     {
         $this->setErrorHandlerSettings();
 
-        $this->setTimeZone();
-
         $this->container = $this->buildContainer($basePath . 'app/kernel/definitions.php');
 
         $this->setBasePath($basePath);
@@ -70,6 +70,12 @@ final class Application
         $this->bindInstance();
 
         $this->registerErrorHandler();
+
+        $this->loadEnvData();
+
+        $this->config = $this->loadConfig();
+
+        $this->setTimeZone();
     }
 
     /**
@@ -88,6 +94,29 @@ final class Application
         return $this->basePath;
     }
 
+    /**
+     * @return string
+     * @throws ConfigMissedException
+     */
+    public function environment(): string
+    {
+        return $this->config('env');
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     * @throws ConfigMissedException
+     */
+    public function config(string $key)
+    {
+        if (!isset($this->config[$key]) || false === $this->config[$key]) {
+            throw new ConfigMissedException(sprintf('%s missed', $key));
+        }
+
+        return $this->config[$key];
+    }
+
     private function setErrorHandlerSettings(): void
     {
         error_reporting(E_ALL);
@@ -96,7 +125,7 @@ final class Application
 
     private function setTimeZone(): void
     {
-        date_default_timezone_set($this->timeZone);
+        date_default_timezone_set($this->config('timeZone'));
     }
 
     /**
@@ -141,5 +170,18 @@ final class Application
     private function registerErrorHandler(): BooBoo
     {
         return $this->container->make(BooBoo::class);
+    }
+
+    private function loadEnvData(): void
+    {
+        $this->container->make(Dotenv::class);
+    }
+
+    /**
+     * @return array
+     */
+    private function loadConfig(): array
+    {
+        return require $this->basePath . '/config/app.php';
     }
 }
