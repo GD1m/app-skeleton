@@ -63,7 +63,7 @@ final class Application
     {
         $this->setErrorHandlerSettings();
 
-        $this->container = $this->buildContainer($basePath . 'app/kernel/definitions.php');
+        $this->container = $this->buildContainer($basePath . 'app/Kernel/definitions.php');
 
         $this->setBasePath($basePath);
 
