@@ -9,7 +9,8 @@
       "email": "gdim447@gmail.com"
     }
   ],
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "php": ">=7.3.0",
     "psr/http-server-middleware": "^1.0",
