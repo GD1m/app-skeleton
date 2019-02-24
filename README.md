@@ -6,7 +6,7 @@ Created as a skeleton for performing test tasks without frameworks.
 
 Use it at own risk :)
 
-Backward compatibility may not be supported. Just fork the repository and make something amazing :)
+Backward compatibility may not be supported. Just run ```composer create-project gd1m/non-framework-php-starter-kit``` and make something amazing :)
 
 # Dependencies
 
