@@ -2,11 +2,13 @@
 
 namespace App\Exceptions;
 
+use Kernel\Exceptions\ResponsibleException;
+
 /**
  * Class BadCredentialsException
  * @package App\Exceptions
  */
-final class BadCredentialsException extends \Exception implements Responsible
+final class BadCredentialsException extends \Exception implements ResponsibleException
 {
     /**
      * @return int

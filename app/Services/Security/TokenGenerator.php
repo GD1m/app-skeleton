@@ -4,7 +4,7 @@ namespace App\Services\Security;
 
 
 use App\Exceptions\InfiniteLoopException;
-use App\Kernel\Utils\String\RandomStringGenerator;
+use Kernel\Utils\String\RandomStringGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -38,6 +38,7 @@ class TokenGenerator
      * @param int $length
      * @return string
      * @throws InfiniteLoopException
+     * @throws \Exception
      */
     public function generateUniqueToken($entityClass, $fieldName = 'token', $length = 50): string
     {

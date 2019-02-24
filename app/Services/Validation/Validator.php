@@ -20,6 +20,7 @@ final class Validator
      * @var array
      */
     private $rules;
+
     /**
      * @var RakitValidator
      */
