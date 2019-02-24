@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-use App\Kernel\Http\Kernel;
+use Kernel\Http\Kernel;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 
-/** @var \App\Kernel\Application $app */
+/** @var \Kernel\Application $app */
 $app = require './../bootstrap/app.php';
 
 $container = $app->container();

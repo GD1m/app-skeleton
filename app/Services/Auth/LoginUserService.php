@@ -17,6 +17,7 @@ final class LoginUserService
      * @var EntityManagerInterface
      */
     private $entityManager;
+
     /**
      * @var SessionFactory
      */

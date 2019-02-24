@@ -3,7 +3,7 @@
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 
-/** @var \App\Kernel\Application $app */
+/** @var \Kernel\Application $app */
 $app = require './bootstrap/app.php';
 
 $container = $app->container();

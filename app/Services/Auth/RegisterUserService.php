@@ -19,10 +19,12 @@ final class RegisterUserService
      * @var Validator
      */
     private $validator;
+
     /**
      * @var CreateUserService
      */
     private $createUserService;
+
     /**
      * @var EntityManagerInterface
      */

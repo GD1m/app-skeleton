@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use App\Kernel\Application;
+use Kernel\Application;
 
 require __DIR__ . '/../vendor/autoload.php';
 

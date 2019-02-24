@@ -54,18 +54,9 @@ class User
      **/
     private $sessions;
 
-    /**
-     * @OneToMany(targetEntity="TodoList", mappedBy="user")
-     * @OrderBy({"createdAt" = "DESC"})
-     *
-     * @var TodoList[]|Collection
-     **/
-    private $todoLists;
-
     public function __construct()
     {
         $this->sessions = new ArrayCollection();
-        $this->todoLists = new ArrayCollection();
     }
 
     /**
@@ -138,21 +129,5 @@ class User
     public function getSessions(): Collection
     {
         return $this->sessions;
-    }
-
-    /**
-     * @param TodoList $todoList
-     */
-    public function addTodoList(TodoList $todoList): void
-    {
-        $this->todoLists[] = $todoList;
-    }
-
-    /**
-     * @return TodoList[]|Collection
-     */
-    public function getTodoLists(): Collection
-    {
-        return $this->todoLists;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Kernel\Exceptions\ResponsibleException;
 use Rakit\Validation\ErrorBag;
 use Throwable;
 
@@ -9,7 +10,7 @@ use Throwable;
  * Class ValidationException
  * @package App\Exceptions
  */
-final class ValidationException extends \Exception implements Responsible
+final class ValidationException extends \Exception implements ResponsibleException
 {
     /**
      * @var ErrorBag

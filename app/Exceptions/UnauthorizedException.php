@@ -2,11 +2,13 @@
 
 namespace App\Exceptions;
 
+use Kernel\Exceptions\ResponsibleException;
+
 /**
  * Class UnauthorizedException
- * @package App\Kernel\Exceptions
+ * @package Kernel\Exceptions
  */
-final class UnauthorizedException extends \Exception implements Responsible
+final class UnauthorizedException extends \Exception implements ResponsibleException
 {
     /**
      * @return int

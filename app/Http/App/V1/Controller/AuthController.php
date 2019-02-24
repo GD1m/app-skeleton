@@ -4,7 +4,8 @@ namespace App\Http\App\V1\Controller;
 
 use App\Entity\User;
 use App\Http\App\V1\Transformers\User\UserTransformer;
-use App\Kernel\Http\Request\Request;
+use App\Http\Controller;
+use Kernel\Http\Request\Request;
 use App\Services\Auth\LoginUserService;
 use App\Services\Auth\LogoutService;
 use App\Services\Auth\RegisterUserService;
@@ -30,6 +31,7 @@ final class AuthController extends Controller
      * @var Request
      */
     private $request;
+
     /**
      * @var RegisterUserService
      */
